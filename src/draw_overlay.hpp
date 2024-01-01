@@ -1,0 +1,4 @@
+#ifndef DRAW_OVERLAY_HPP
+#define DRAW_OVERLAY_HPP
+
+#endif // DRAW_OVERLAY_HPP

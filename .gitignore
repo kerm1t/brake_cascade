@@ -1,0 +1,47 @@
+# windows
+/build
+/Debug
+# lib needed for Windows only, on linux just use sudo apt-get ...
+# however there is a fix needed for ImGui+SDL2+Linux :-) --> imgui moved to /include
+/lib
+.vscode
+
+# Prerequisites
+*.d
+
+# private
+/img.me
+devlog.me.rtf
+read.me.txt
+raspi_go.me.txt
+linux.me.txt
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app

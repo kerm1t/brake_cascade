@@ -1,0 +1,91 @@
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+# "../" --> output directory relative same to running in IDE
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
+
+set(CMAKE_GENERATOR_PLATFORM "x64")
+set(CMAKE_CXX_STANDARD 11)
+
+project(brake_cascade)
+
+if(MSVC)
+  # CMake >= 3.15 will erroneously define PROTOBUF_USE_DLLS otherwise
+  set (Protobuf_USE_STATIC_LIBS TRUE) 
+endif()
+
+
+set (SDL2_DIR ./lib/SDL2-2.26.4/cmake)
+find_package(SDL2 REQUIRED)
+if (eCAL_ON)
+  find_package(eCAL REQUIRED)
+  find_package(Protobuf REQUIRED)
+endif()
+
+set(protobuf_files
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/pcl.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/pcl_header.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/pcl_pfield.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/types.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/lane.proto 
+)
+
+set(glew "glew-2.1.0")
+
+include_directories(. ./src
+lib/${glew}/include
+${SDL2_INCLUDE_DIRS}
+./include/imgui ./include/imgui/src ./include/imgui/debuggers
+./src/features ./src/math ./src/pointcloud ./src/util)
+
+link_directories(./lib/${glew}/lib/release/x64 ./lib ../lib)
+
+# add WIN32 to remove console window ->
+add_executable (${CMAKE_PROJECT_NAME} WIN32
+./src/main.cpp
+./src/draw.hpp
+#./src/pointcloud_io.hpp
+#./src/linmath.h
+#./src/pointcloud.hpp
+./src/draw_primitives
+./src/draw_overlay
+./src/shader/start.fs
+./src/shader/start.vs
+include/imgui/imconfig.h
+include/imgui/imgui.h
+include/imgui/imgui.cpp
+include/imgui/imgui_demo.cpp
+include/imgui/imgui_draw.cpp
+include/imgui/imgui_internal.h
+include/imgui/imgui_tables.cpp
+include/imgui/imgui_widgets.cpp
+include/imgui/src/imgui_impl_opengl3.cpp
+include/imgui/src/imgui_impl_opengl3.h
+include/imgui/src/imgui_impl_opengl3_loader.h
+include/imgui/src/imgui_impl_sdl2.cpp
+include/imgui/src/imgui_impl_sdl2.h
+# eCal
+#./include/PointCloudHandler.cpp
+#./include/PointCloudHandler.h
+# eCal
+./src/pointcloud/pointcloud.hpp
+./src/pointcloud/pointcloud_io.hpp
+./src/pointcloud/pointcloud_synth.hpp
+./src/features/geom.h
+./src/features/freespace.h
+./src/features/lane.h
+./src/math/linmath.h
+./src/math/mathbase.h
+./src/util/color.h
+)
+
+if (eCal_ON)
+  PROTOBUF_TARGET_CPP(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/proto/ ${protobuf_files})
+  target_link_libraries(${CMAKE_PROJECT_NAME}
+    eCAL::core protobuf::libprotobuf
+    ${SDL2_LIBRARIES}
+  )# grrr, glew is so shitty glew32.lib)
+else()
+  target_link_libraries(${CMAKE_PROJECT_NAME}
+    ${SDL2_LIBRARIES}
+  )
+endif()

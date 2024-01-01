@@ -1,0 +1,96 @@
+This app visualize point clouds + detections / annotations on
+a raspberry pi 4 (A72 Arm)
+
+2do (2024)
+---
+- add a manager
+- show synthetic point cloud
+- simulation --> thread (first do in the loop, then do thread, s. startduck)
+
+
+2do (2023)
+---
+6/10
+- eCal functionality
+
+5/16
++ compile & build with ImGUI under Linux
+
+4/9/
+- shader effect: sinus schwabbel bildschirm
+- shader class
++ ImGUI (5/16)
+- eCal
++ pcd speichern! --> s. lane repo prototype
+- yaml
+- micro-profiler
+
+4/7
+- RMB -> um z-achse drehen
+
+4/2/
+- kameraflug
+    - truck einzeichnen
+    - truck fährt und baut die akkumulierte punktwolke auf
+    - camera fliegt um den truck
++ fenster vergroessern
+  + inhalt vergroessern (resize)
++ sun, earth & moon animation-
+
+3/29
+- use scopes, e.g. hrl::arm::draw
+
+3/28
++ get rid of vec3f.hxx at some point
+- camera class
+
+3/27
++ draw the cube
+- cube seems to rotate differently
++ draw grid lines in y-direction
++ move the cube to y = 20,
+  (a) do this pre-calculated
+  (b) with attribute, set this in shader
+- cube: oscillate object between y = -20 ... 20
++ cube: circle around center, r = 20
+(+) oopRefactor
+- inverse point size --> s. geometry shader (common vis / hrl_workshop opengl tuto)
+
+3/26
++ imgui (5/16)
+- metal --> https://developer.apple.com/videos/play/wwdc2019/611/ , https://developer.apple.com/metal/cpp/
+- what about the graphics thing from chr. exner (hilde?)
+(opengl is deprecated since 2018 at apple)
+- sokol??
+- fix location of glew.lib file(s)
+- use vcpck?
+- load point cloud vertices directly into ... vertices, that upload to gpu
+- use VAO instead of VBO ?? this will save a bit of calls, but in the end, hmm...
+- inverse point size shader!!!
+- overlay --> second "flat" shader program
+
+3/25
+- drag and drop point clouds to the viewer
++ rotate properly // camera class?
+- zoom (mouse wheel)
+- repo: ARM_point_cloud (--> raspi A72)
+- kamerafahrt (s. Aeye ...)
+- coole shader f.d. pointcloud --> integrate expert stuff
+
+------------------------------------------------------
+hmmm, jetzt könnte ich mal nen github branch erstellen
+für color coding per frag shader!!
+------------------------------------------------------
+
+3/23/2023
+- download info for sdl + glew
++ draw grid
++ draw cube AND point cloud
+- imgui :-)
++ change color in real time (current frame) --> do with frag shader? --> other options s. here: https://www.reddit.com/r/opengl/comments/pdzm0d/color_for_entire_object_in_opengl/
+
+(1) You could just not use vertex colors at all and use a fragment shader which takes in a vec3 uniform and use that as the color.
+
+(2) You don't need to change anything in your shaders. You can effectively turn any attribute into a uniform using glVertexAttrib call. --> ok, fuer eine gemeinsame farbe fuer alle?
+
+done first --> (3) You don't need "one color per vertex". Use glVertexAttrib to set the color and disable (or don't enable) vertex array for color (glDisableVertexAttribArray)
