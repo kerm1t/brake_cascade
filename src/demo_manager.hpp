@@ -1,6 +1,8 @@
 #ifndef DEMO_MANAGER_H
 #define DEMO_MANAGER_H
 
+#include "gpu_primitives.hpp"
+
 class demo_manager {
 private:
 public:
@@ -14,6 +16,13 @@ public:
     grid1->create_buffers();
     grid1->gpu_push_buffers();
     return 0;
+  }
+
+  void free_scene() {
+    grid_free();
+    gpu_cube_free();
+    grid1->gpu_free();
+    delete(grid1);
   }
 
   int load_objs() {
@@ -42,13 +51,6 @@ public:
     htor->create_buffers();
     htor->gpu_push_buffers();
     return 0;
-  }
-
-  void free_scene() {
-    grid_free();
-    gpu_cube_free();
-    grid1->gpu_free();
-    delete(grid1);
   }
 
   void free_objs() {

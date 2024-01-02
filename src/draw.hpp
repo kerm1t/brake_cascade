@@ -52,7 +52,7 @@ GLuint cube_vbo_tex;
 // (b) gpu shader attributes
 GLint vpos_location, vcol_location, tex_location;
 
-#include "draw_primitives.hpp" // include after vpos_location, 2do: fix this
+#include "gpu_primitives.hpp" // include after vpos_location, 2do: fix this
 
 void gpu_create_shaders() {  
   GLuint vertex_shader, fragment_shader;

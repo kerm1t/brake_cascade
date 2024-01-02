@@ -43,10 +43,7 @@ link_directories(./lib/${glew}/lib/release/x64 ./lib ../lib)
 add_executable (${CMAKE_PROJECT_NAME} WIN32
 ./src/main.cpp
 ./src/draw.hpp
-#./src/pointcloud_io.hpp
-#./src/linmath.h
-#./src/pointcloud.hpp
-./src/draw_primitives
+./src/gpu_primitives
 ./src/draw_overlay
 ./src/shader/start.fs
 ./src/shader/start.vs

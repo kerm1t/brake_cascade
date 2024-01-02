@@ -28,7 +28,7 @@
 #include "pointcloud.hpp"
 
 #include "draw.hpp"
-#include "draw_primitives.hpp"
+
 
 // eCAL
 #ifdef eCAL_ON

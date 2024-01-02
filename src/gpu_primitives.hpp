@@ -1,5 +1,5 @@
-#ifndef DRAW_PRIMITIVES_HPP
-#define DRAW_PRIMITIVES_HPP
+#ifndef GPU_PRIMITIVES_HPP
+#define GPU_PRIMITIVES_HPP
 /*
 class grid {
   // not used yet
