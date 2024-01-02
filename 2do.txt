@@ -3,6 +3,10 @@ a raspberry pi 4 (A72 Arm)
 
 2do (2024)
 ---
+1/2
+- #include mystery --> pointcloud.hpp vs. pointcloud/pointcloud.hpp
+
+1/1
 - add a manager
 - show synthetic point cloud
 - simulation --> thread (first do in the loop, then do thread, s. startduck)

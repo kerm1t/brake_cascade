@@ -12,12 +12,12 @@ SDL_Window* init_SDL()
 
   // OpenGL initialisieren
   // Frame Buffer definieren
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);		// 8 bit für rot
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);		// 8 bit für grün
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);		// 8 bit für blau
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);		// 8 bit für alpha
-  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);	// 32 bit für Pixel (optional)
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	// Double Buffering aktivieren
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);      // 8 bit für rot
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);    // 8 bit für grün
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);     // 8 bit für blau
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);      // 8 bit für alpha
+  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);  // 32 bit für Pixel (optional)
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);  // Double Buffering aktivieren
 
   // Fenster erzeugen
   window = SDL_CreateWindow("OpenGL Engine + eCAL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
