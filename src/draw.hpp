@@ -343,7 +343,7 @@ void enable_colorbuffer(int color_coding) { // toggle color buffers (distance, h
 }
 
 mat4x4 mvp;
-void cam_update(float width, float height) { // or just view update
+void cam_update(int width, int height) { // or just view update
   float aspect;
   mat4x4 view, projection;
 //  mat4x4 m, p;

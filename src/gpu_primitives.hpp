@@ -10,10 +10,10 @@ std::vector<float> grid_colors;
 void grid_create() {
   for (int x = -50; x <= 50; x += 10) {
     // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM? 
-    grid_vertices.push_back(x);
+    grid_vertices.push_back((float)x);
     grid_vertices.push_back(-50.0f);
     grid_vertices.push_back(0.0f);
-    grid_vertices.push_back(x);
+    grid_vertices.push_back((float)x);
     grid_vertices.push_back(50.0f);
     grid_vertices.push_back(0.0f);
     grid_colors.push_back(1.0f);
@@ -25,10 +25,10 @@ void grid_create() {
   }
   for (int y = -50; y <= 50; y += 10) {
     grid_vertices.push_back(-50.0f);
-    grid_vertices.push_back(y);
+    grid_vertices.push_back((float)y);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back(50.0f);
-    grid_vertices.push_back(y);
+    grid_vertices.push_back((float)y);
     grid_vertices.push_back(0.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
@@ -100,9 +100,9 @@ public:
     glDeleteBuffers(1, &_vbo_col);
   };
   virtual void gpu_push_buffers() { // ... this could be obsolete then
-    vtx_count = vertices.size();
-    col_count = colors.size(); // exception, as I had forgot to set colorcount
-    ind_count = indices.size();
+    vtx_count = (GLuint)vertices.size();
+    col_count = (GLuint)colors.size(); // exception, as I had forgot to set colorcount
+    ind_count = (GLuint)indices.size();
     // (a) vertices
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vtx_count, &vertices[0], GL_STATIC_DRAW);
@@ -158,10 +158,10 @@ public:
 //    vtx_count = 0;
     for (int x = -50; x <= 50; x += 10) {
       // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM? 
-      vertices.push_back(x);
+      vertices.push_back((float)x);
       vertices.push_back(-50.0f);
       vertices.push_back(0.0f);
-      vertices.push_back(x);
+      vertices.push_back((float)x);
       vertices.push_back(50.0f);
       vertices.push_back(0.0f);
 //      vtx_count++;
@@ -385,7 +385,7 @@ public:
     for (int i = 0; i < 2; ++i)
     {
       float h = -height / 2.0f + i * height;           // z value; -h/2 to h/2
-      float nz = -1 + i * 2;                           // z value of normal; -1 to 1
+      float nz = -1 + (float)i * 2;                    // z value of normal; -1 to 1
 
       // center point
       vertices.push_back(0);     vertices.push_back(0);     vertices.push_back(h);
