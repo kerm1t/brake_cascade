@@ -45,11 +45,14 @@
 #include "pointcloud/pointcloud_synth.hpp"
 #include "pointcloud/pointcloud_io.hpp"
 
-// lloft objects initialized with on instance of pointcloud
+#include "demo_manager.hpp"
+
+// lloft objects initialized with an instance of pointcloud
 lloft::pointcloud p;
 lloft::pointcloud_synth psynth(p);
 lloft::pointcloud_io pio(p);
 
+demo_manager dman;
 
 SDL_Window* init_SDL()
 {
@@ -197,37 +200,8 @@ int main(int argc, char** argv)
 //  int numpoints = pointcloud_load(s[0]);
 //  gpu_push_buffers(numpoints);
 
-  // (c) grid
-  grid_create();
-  grid_gpu_push_buffers();
-
-  // (d) oop-grid ;-)
-  grid1 = new grid();
-  grid1->create_buffers();
-  grid1->gpu_push_buffers();
-
-  // (e) sphere
-  sph1 = new sphere();
-  sph1->r = 0.0f; sph1->g = sph1->b = 1.0f;
-  sph1->create_buffers();
-  sph1->gpu_push_buffers();
-
-  moon = new sphere();
-  moon->radius = 0.6f;
-  moon->r = moon->g = moon->b = 1.0f;
-  moon->create_buffers();
-  moon->gpu_push_buffers();
-  /*
-    sun = new sphere();
-    sun->radius = 6.0f;
-    sun->r = 255.0f/255.0f; sun->g = 165.0f / 255.0f; sun->b = 0.0f;
-    sun->create_buffers();
-    sun->gpu_push_buffers();
-  */
-  htor = new cylinder();
-  htor->r = htor->g = htor->b = 1.0f;
-  htor->create_buffers();
-  htor->gpu_push_buffers();
+  dman.create_scene();
+  dman.load_objs();
 
   init_GL();
 
@@ -248,8 +222,6 @@ int main(int argc, char** argv)
         // (b) collision detection
         // (c) draw
     render(window, p.numpoints);
-
-
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -398,19 +370,9 @@ int main(int argc, char** argv)
   } while (!close);
 
   gpu_free_buffers(); // free point cloud vbo
-  grid_free();
-  gpu_cube_free();
-  grid1->gpu_free();
-  delete(grid1);
-  sph1->gpu_free();
-  delete(sph1);
-  moon->gpu_free();
-  delete(moon);
-  if (sun) {
-    sun->gpu_free();
-    delete(sun);
-  }
-  htor->gpu_free();
+
+  dman.free_objs();
+  dman.free_scene();
 
   SDL_Quit();
 
