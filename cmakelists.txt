@@ -39,14 +39,9 @@ ${SDL2_INCLUDE_DIRS}
 
 link_directories(./lib/${glew}/lib/release/x64 ./lib ../lib)
 
-# add WIN32 to remove console window ->
-add_executable (${CMAKE_PROJECT_NAME} WIN32
-./src/main.cpp
-./src/draw.hpp
-./src/gpu_primitives
-./src/draw_overlay
-./src/shader/start.fs
-./src/shader/start.vs
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set(src_imgui
 include/imgui/imconfig.h
 include/imgui/imgui.h
 include/imgui/imgui.cpp
@@ -60,20 +55,37 @@ include/imgui/src/imgui_impl_opengl3.h
 include/imgui/src/imgui_impl_opengl3_loader.h
 include/imgui/src/imgui_impl_sdl2.cpp
 include/imgui/src/imgui_impl_sdl2.h
+)
+
+set(src_lst
+src/main.cpp
+src/init.hpp
+src/user.hpp
+src/draw.hpp
+src/gpu_primitives.hpp
+src/draw_overlay.hpp
+src/shader/start.fs
+src/shader/start.vs
 # eCal
 #./include/PointCloudHandler.cpp
 #./include/PointCloudHandler.h
 # eCal
-./src/pointcloud/pointcloud.hpp
-./src/pointcloud/pointcloud_io.hpp
-./src/pointcloud/pointcloud_synth.hpp
-./src/features/geom.h
-./src/features/freespace.h
-./src/features/lane.h
-./src/math/linmath.h
-./src/math/mathbase.h
-./src/util/color.h
+src/pointcloud/pointcloud.hpp
+src/pointcloud/pointcloud_io.hpp
+src/pointcloud/pointcloud_synth.hpp
+src/features/geom.h
+src/features/freespace.h
+src/features/lane.h
+src/math/linmath.h
+src/math/mathbase.h
+src/util/color.h
 )
+
+# add WIN32 to remove console window ->
+add_executable (${CMAKE_PROJECT_NAME} WIN32 ${src_lst} ${src_imgui})
+
+source_group("src/imgui" FILES ${src_imgui})
+source_group("src" FILES ${src_lst})
 
 if (eCal_ON)
   PROTOBUF_TARGET_CPP(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/proto/ ${protobuf_files})
