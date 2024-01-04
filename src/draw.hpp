@@ -3,6 +3,13 @@
 
 #include "linmath.h"
 
+
+#include <chrono>
+std::chrono::time_point<std::chrono::high_resolution_clock> stop;
+float month;
+float year;
+
+
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 int colorcoding = 0;
@@ -427,13 +434,21 @@ void render(SDL_Window* window, int numpoints) {
 
 // (d) draw moon (animated)
     r = 3.f;
-    moon_spin += 0.01f;
-    if (moon_spin >= 360.0f) moon_spin = 0.0f;
+    moon_spin += 0.01f; // RAD
+    if (moon_spin >= 2*PI) moon_spin = 0.0f;
     moonpos[0] = earth[0] + r * cos(moon_spin);
     moonpos[1] = earth[1] + r * sin(moon_spin);
     glUniform3f(T_location, moonpos[0], moonpos[1], 0.0f); // pseudo camera position
     moon->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f);
+    // measure 1 moon spin
+    if (moon_spin < 0.01f)
+    {
+      auto start = stop;
+      stop = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+      month = duration.count();
+    }
 
 // (e) draw sun
 if (sun)    sun->render();

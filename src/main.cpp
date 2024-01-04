@@ -32,6 +32,8 @@
 #include "init.hpp"
 #include "user.hpp"
 
+#include <chrono>
+
 // eCAL
 #ifdef eCAL_ON
 #include <ecal/ecal.h>
@@ -163,6 +165,8 @@ int main(int argc, char** argv)
         counter++;
       ImGui::SameLine();
       ImGui::Text("counter = %d", counter);
+      ImGui::Text("moon spin = %f", moon_spin);
+      ImGui::Text("month = %f [s]", month/1000000); // ms --> s
 
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
       ImGui::End();
