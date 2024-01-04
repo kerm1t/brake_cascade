@@ -2,7 +2,7 @@
 // pointcloud viewer / processor for ARM
 //
 
-#include <iostream> 
+#include <iostream>
 #define GLEW_STATIC                     // damit GLEW statisch gelinkt werden kann
 #include <GL/glew.h>
 //#define SDL_MAIN_HANDLED                // eigene Hauptfunktion für SDL                                                                                                                                                                         #ifdef _WIN32                           // nur für Windows                                                              #include 
@@ -32,7 +32,11 @@
 #include "init.hpp"
 #include "user.hpp"
 
+// simulation
 #include <chrono>
+#include <SDL_thread.h>
+#include "sim.hpp"
+
 
 // eCAL
 #ifdef eCAL_ON
@@ -127,6 +131,9 @@ int main(int argc, char** argv)
   bool show_demo_window = false;
   bool show_another_window = false;
 // --> draw.hpp  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+  SDL_Thread *tsim;
+  tsim = SDL_CreateThread(thread1, "sim", NULL);
 
   // Game Loop
   bool close = false;
