@@ -378,10 +378,10 @@ void cam_update(int width, int height) { // or just view update
   mat4x4_mul(mvp, projection, view);
 }
 
-float earth_spin = 0.0f;
+//float earth_spin = 0.0f;
 vec2 earth;
 vec2 moonpos;
-float moon_spin = 0.0f;
+//float moon_spin = 0.0f;
 void render(SDL_Window* window, int numpoints) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);

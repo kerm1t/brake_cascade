@@ -1,10 +1,14 @@
 #pragma once
 
-#include <chrono>
+#include <chrono> // precision needed?
 std::chrono::time_point<std::chrono::high_resolution_clock> stop;
 float month;
 std::chrono::time_point<std::chrono::high_resolution_clock> stop_earth;
 float year;
+
+float earth_spin = 0.0f;
+float moon_spin = 0.0f;
+#define PI 3.14159f // find a common place for math defines? vs. single header
 
 int thread1(void *p)
 {
