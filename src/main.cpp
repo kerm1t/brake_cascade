@@ -8,7 +8,7 @@
 //#define SDL_MAIN_HANDLED                // eigene Hauptfunktion für SDL                                                                                                                                                                         #ifdef _WIN32                           // nur für Windows                                                              #include 
 
 #include "imgui.h"
-#ifdef _WIN32               // nur fuer Windows
+#ifdef _WIN32               // Win
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #else
@@ -16,16 +16,16 @@
 #include "src/imgui_impl_opengl3.h"
 #endif
 
-#ifdef _WIN32               // nur fuer Windows
+#ifdef _WIN32               // Win
 #include <SDL.h>
 #pragma comment(lib, "SDL2.lib")
 #pragma comment(lib, "glew32s.lib")
 #pragma comment(lib, "opengl32.lib")
 #else
-#include <SDL2/SDL.h>                   // Linux / MacOS  
+#include <SDL2/SDL.h>       // Linux / MacOS  
 #endif
 
-#include "pointcloud.hpp"
+#include "pointcloud.hpp" // <-- need to be fixed, uncomment this and gpu_primitives will not work anymore ...1/5/2024
 
 #include "draw.hpp"
 
@@ -48,12 +48,14 @@
 #include "lane.pb.h"
 #endif // eCAL_ON
 
+
 // LLoFT
 #include "pointcloud/pointcloud.hpp"
 #include "pointcloud/pointcloud_synth.hpp"
 #include "pointcloud/pointcloud_io.hpp"
 
 #include "demo_manager.hpp"
+
 
 // lloft objects initialized with an instance of pointcloud
 lloft::pointcloud p;
@@ -174,6 +176,7 @@ int main(int argc, char** argv)
       ImGui::Text("counter = %d", counter);
       ImGui::Text("moon spin = %f", moon_spin);
       ImGui::Text("month = %f [s]", month/1000000); // ms --> s
+      ImGui::Text("year = %f [s]", year / 1000000); // ms --> s
 
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
       ImGui::End();

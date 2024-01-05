@@ -3,13 +3,6 @@
 
 #include "linmath.h"
 
-
-#include <chrono>
-std::chrono::time_point<std::chrono::high_resolution_clock> stop;
-float month;
-float year;
-
-
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 int colorcoding = 0;
@@ -424,8 +417,8 @@ void render(SDL_Window* window, int numpoints) {
 
 // (c) draw earth vbo (animated) ... this could be decoupled, i.e. (i) anim/sim step, (ii) draw
     float r = 20.0f;
-    earth_spin += 0.005f;
-    if (earth_spin >= 360.0f) earth_spin = 0.0f;
+//    earth_spin += 0.005f;
+//    if (earth_spin >= 360.0f) earth_spin = 0.0f;
     earth[0] = r * cos(earth_spin);
     earth[1] = r * sin(earth_spin);
     glUniform3f(T_location, earth[0], earth[1], 0.0f); // pseudo camera position
