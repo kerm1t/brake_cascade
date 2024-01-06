@@ -409,7 +409,7 @@ void render(SDL_Window* window, int numpoints) {
     grid_render();
 
 // (b) draw cube
-    glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
+    glUniform3f(T_location, d_truck, 0.0f, 0.0f); // pseudo camera position
     gpu_cube_render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f);
 

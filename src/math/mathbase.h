@@ -1,3 +1,5 @@
+#ifndef MATHBASE_H
+#define MATHBASE_H
 
 float lerp(const float a, const float b, const float t) {
   return a + t * (b - a);
@@ -12,3 +14,5 @@ void lerp2(vec3& r, const vec3 a, const vec3 b, const float t) {
   vec3_scale(d, c, t);
   vec3_add(r, a, d);
 }
+
+#endif // MATHBASE_H

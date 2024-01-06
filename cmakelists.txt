@@ -61,9 +61,12 @@ set(src_lst
 src/main.cpp
 src/init.hpp
 src/user.hpp
+src/sim.hpp
+src/cascade_jerk3.hpp
 src/draw.hpp
 src/gpu_primitives.hpp
 src/draw_overlay.hpp
+src/draw_imgui.hpp
 src/shader/start.fs
 src/shader/start.vs
 # eCal

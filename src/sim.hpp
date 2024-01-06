@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SIM_HPP
+#define SIM_HPP
 
 #include <chrono> // precision needed?
 std::chrono::time_point<std::chrono::high_resolution_clock> stop;
@@ -9,6 +10,11 @@ float year;
 float earth_spin = 0.0f;
 float moon_spin = 0.0f;
 #define PI 3.14159f // find a common place for math defines? vs. single header
+
+float d_truck = 0.0f;
+
+#include "cascade_jerk3.hpp"
+int i_sim;
 
 int thread1(void *p)
 {
@@ -38,6 +44,15 @@ int thread1(void *p)
       auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
       month = duration.count();
     }
+
+    // (a) linear
+//    d_truck += 0.02f;
+//    if (d_truck > 10.0f) d_truck = 0.0f;
+
+    // (b) brake cascade
+    d_truck = -100+sim::brake(i_sim++);
   }
   return 0;
 }
+
+#endif // SIM_HPP

@@ -31,6 +31,8 @@ void draw_imgui(ImGuiIO& io) {
     ImGui::Text("moon spin = %f", moon_spin);
     ImGui::Text("month = %f [s]", month / 1000000); // ms --> s
     ImGui::Text("year = %f [s]", year / 1000000); // ms --> s
+    ImGui::Text("v = %f [mph]", sim::v);
+//    ImGui::PlotLines("v[mph]", sim::a_v, sim::a_v.size());// , i_sim, 0, -1.0f, 1.0f, ImVec2(0, 80));
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     ImGui::End();
