@@ -5,6 +5,8 @@ bool show_demo_window = false;
 bool show_another_window = false;
 // --> draw.hpp  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+//extern bool sim_start;
+
 void draw_imgui(ImGuiIO& io) {
   // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
   if (show_demo_window)
@@ -33,7 +35,11 @@ void draw_imgui(ImGuiIO& io) {
     ImGui::Text("year = %f [s]", year / 1000000); // ms --> s
     ImGui::Text("v = %f [mph]", sim::v);
 //    ImGui::PlotLines("v[mph]", sim::a_v, sim::a_v.size());// , i_sim, 0, -1.0f, 1.0f, ImVec2(0, 80));
-
+    if (ImGui::Button("start sim")) {
+//      sim_start = true;
+      sdl_tvar->sim_start = true; // this throws an exception, maybe need to be a mutex?
+//      sim_start = true;
+    }
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     ImGui::End();
   }

@@ -15,14 +15,29 @@ float d_truck = 0.0f;
 
 #include "cascade_jerk3.hpp"
 int i_sim;
+//bool sim_start = false;
 
-int thread1(void *p)
+// https://stackoverflow.com/questions/17792542/how-to-send-additional-parameters-to-an-sdl-thread
+typedef struct thread_shared_vars {
+  bool sim_start;
+};
+//extern bool sim_start;
+//bool sim_start = true;
+thread_shared_vars* sdl_tvar;
+
+int thread1(void* p)
 {
   while (1)
   {
 //    SDL_Delay(1); // now run at 1KHz
     SDL_Delay(5); // now run at 200Hz
+//    if (!sim_start) return 0;
+////    thread_shared_vars* tvar_sdl = (thread_shared_vars*)p;
+////    if (!tvar_sdl->sim_start) return 0;
+//    if (!sim_start) return 0;
+    if (!sdl_tvar->sim_start) return 0;
 
+      
     earth_spin += 0.005f;
     if (earth_spin >= 2 * PI) earth_spin = 0.0f;
     // measure 1 moon spin
@@ -51,6 +66,8 @@ int thread1(void *p)
 
     // (b) brake cascade
     d_truck = -100+sim::brake(i_sim++);
+
+//    free(p);
   }
   return 0;
 }
