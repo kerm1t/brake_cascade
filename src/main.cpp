@@ -32,8 +32,10 @@
 //std::atomic<bool> sim_start{ false };
 #include <chrono>
 #include <SDL_thread.h>
-static bool sim_start = false;
+///#include <thread>
+//static bool sim_start = false;
 #include "sim.hpp"
+///std::thread tsim;
 
 #include "draw.hpp"
 #include "draw_imgui.hpp"
@@ -137,7 +139,8 @@ int main(int argc, char** argv)
   SDL_Thread* tsim;
 /*  thread_shared_vars* */sdl_tvar = (thread_shared_vars*)malloc(sizeof(thread_shared_vars));
   sdl_tvar->sim_start = false;
-  tsim = SDL_CreateThread(thread1, "sim", 0);// sdl_tvar);
+  tsim = SDL_CreateThread(thread1, "sim", std::ref(sdl_tvar));
+///  tsim = std::thread(thread1);
   //sim_start = false; // let's try again
 
   // Game Loop
@@ -176,7 +179,15 @@ int main(int argc, char** argv)
       {
         close = true;
       }
-      sim_start = true;
+//      sim_start = true;
+      if (event.type == SDL_KEYUP)
+      {
+        if (event.key.keysym.scancode == SDL_SCANCODE_M) // change pointcloud from HFL <--> Velo
+        {
+          sim_start = true;
+        }
+      }
+
     }
   } while (!close);
 
@@ -185,7 +196,10 @@ int main(int argc, char** argv)
   dman.free_objs();
   dman.free_scene();
 
-  free(sdl_tvar);
+
+///  tsim.join();
+
+//  free(sdl_tvar);
 //  SDL_KillThread(tsim);
   SDL_Quit();
 

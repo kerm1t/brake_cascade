@@ -15,7 +15,7 @@ float d_truck = 0.0f;
 
 #include "cascade_jerk3.hpp"
 int i_sim;
-//bool sim_start = false;
+bool sim_start = false;
 
 // https://stackoverflow.com/questions/17792542/how-to-send-additional-parameters-to-an-sdl-thread
 typedef struct thread_shared_vars {
@@ -24,48 +24,53 @@ typedef struct thread_shared_vars {
 //extern bool sim_start;
 //bool sim_start = true;
 thread_shared_vars* sdl_tvar;
+///#include <atomic>
+///std::atomic<bool> sim_start{ false };
+
 
 int thread1(void* p)
+//int thread1()
 {
   while (1)
   {
-//    SDL_Delay(1); // now run at 1KHz
+    std::cout << "thread" << std::endl;
+    //    SDL_Delay(1); // now run at 1KHz
     SDL_Delay(5); // now run at 200Hz
 //    if (!sim_start) return 0;
-////    thread_shared_vars* tvar_sdl = (thread_shared_vars*)p;
-////    if (!tvar_sdl->sim_start) return 0;
-//    if (!sim_start) return 0;
-    if (!sdl_tvar->sim_start) return 0;
+    thread_shared_vars* tvar_sdl = (thread_shared_vars*)p;
+///    if (tvar_sdl->sim_start == false) return 0;
+//    if (!sim_start) return 0; // return will kill the thread
+    if (sim_start)
+    {      
+      earth_spin += 0.005f;
+      if (earth_spin >= 2 * PI) earth_spin = 0.0f;
+      // measure 1 moon spin
+      if (earth_spin < 0.005f)
+      {
+        auto start = stop_earth;
+        stop_earth = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop_earth - start);
+        year = duration.count();
+      }
 
-      
-    earth_spin += 0.005f;
-    if (earth_spin >= 2 * PI) earth_spin = 0.0f;
-    // measure 1 moon spin
-    if (earth_spin < 0.005f)
-    {
-      auto start = stop_earth;
-      stop_earth = std::chrono::high_resolution_clock::now();
-      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop_earth - start);
-      year = duration.count();
+      moon_spin += 0.01f; // RAD
+      if (moon_spin >= 2 * PI) moon_spin = 0.0f;
+      // measure 1 moon spin
+      if (moon_spin < 0.01f)
+      {
+        auto start = stop;
+        stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        month = duration.count();
+      }
+
+      // (a) linear
+  //    d_truck += 0.02f;
+  //    if (d_truck > 10.0f) d_truck = 0.0f;
+
+      // (b) brake cascade
+      d_truck = -100+sim::brake(i_sim++);
     }
-
-    moon_spin += 0.01f; // RAD
-    if (moon_spin >= 2 * PI) moon_spin = 0.0f;
-    // measure 1 moon spin
-    if (moon_spin < 0.01f)
-    {
-      auto start = stop;
-      stop = std::chrono::high_resolution_clock::now();
-      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-      month = duration.count();
-    }
-
-    // (a) linear
-//    d_truck += 0.02f;
-//    if (d_truck > 10.0f) d_truck = 0.0f;
-
-    // (b) brake cascade
-    d_truck = -100+sim::brake(i_sim++);
 
 //    free(p);
   }
