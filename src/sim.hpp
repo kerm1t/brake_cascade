@@ -17,29 +17,14 @@ float d_truck = 0.0f;
 int i_sim;
 bool sim_start = false;
 
-// https://stackoverflow.com/questions/17792542/how-to-send-additional-parameters-to-an-sdl-thread
-typedef struct thread_shared_vars {
-  bool sim_start;
-};
-//extern bool sim_start;
-//bool sim_start = true;
-thread_shared_vars* sdl_tvar;
-///#include <atomic>
-///std::atomic<bool> sim_start{ false };
-
-
 int thread1(void* p)
-//int thread1()
 {
   while (1)
   {
-    std::cout << "thread" << std::endl;
-    //    SDL_Delay(1); // now run at 1KHz
+//    std::cout << "thread" << std::endl;
+//    SDL_Delay(1); // now run at 1KHz
     SDL_Delay(5); // now run at 200Hz
-//    if (!sim_start) return 0;
-    thread_shared_vars* tvar_sdl = (thread_shared_vars*)p;
-///    if (tvar_sdl->sim_start == false) return 0;
-//    if (!sim_start) return 0; // return will kill the thread
+
     if (sim_start)
     {      
       earth_spin += 0.005f;
@@ -72,7 +57,7 @@ int thread1(void* p)
       d_truck = -100+sim::brake(i_sim++);
     }
 
-//    free(p);
+// ... return will leave / kill the thread
   }
   return 0;
 }

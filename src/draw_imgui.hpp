@@ -36,11 +36,8 @@ void draw_imgui(ImGuiIO& io) {
     ImGui::Text("v = %f [mph]", sim::v);
 //    ImGui::PlotLines("v[mph]", sim::a_v, sim::a_v.size());// , i_sim, 0, -1.0f, 1.0f, ImVec2(0, 80));
     if (ImGui::Button("start sim")) {
-//      sim_start = true;
-///      sdl_tvar->sim_start = true; // this throws an exception, maybe need to be a mutex?
-      i_sim = 0;
+// --> need to init -->      i_sim = 0;
       sim_start = true;
-//      tsim.join();
     }
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     ImGui::End();

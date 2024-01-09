@@ -28,14 +28,9 @@
 #include "pointcloud.hpp" // <-- need to be fixed, uncomment this and gpu_primitives will not work anymore ...1/5/2024
 
 // simulation
-//#include <atomic> // thread variables
-//std::atomic<bool> sim_start{ false };
 #include <chrono>
 #include <SDL_thread.h>
-///#include <thread>
-//static bool sim_start = false;
 #include "sim.hpp"
-///std::thread tsim;
 
 #include "draw.hpp"
 #include "draw_imgui.hpp"
@@ -137,11 +132,7 @@ int main(int argc, char** argv)
   ImGuiIO& io = init_Imgui(window, glContext);
 
   SDL_Thread* tsim;
-/*  thread_shared_vars* */sdl_tvar = (thread_shared_vars*)malloc(sizeof(thread_shared_vars));
-  sdl_tvar->sim_start = false;
-  tsim = SDL_CreateThread(thread1, "sim", std::ref(sdl_tvar));
-///  tsim = std::thread(thread1);
-  //sim_start = false; // let's try again
+  tsim = SDL_CreateThread(thread1, "sim", 0);
 
   // Game Loop
   bool close = false;
@@ -179,15 +170,6 @@ int main(int argc, char** argv)
       {
         close = true;
       }
-//      sim_start = true;
-      if (event.type == SDL_KEYUP)
-      {
-        if (event.key.keysym.scancode == SDL_SCANCODE_M) // change pointcloud from HFL <--> Velo
-        {
-          sim_start = true;
-        }
-      }
-
     }
   } while (!close);
 
@@ -196,11 +178,6 @@ int main(int argc, char** argv)
   dman.free_objs();
   dman.free_scene();
 
-
-///  tsim.join();
-
-//  free(sdl_tvar);
-//  SDL_KillThread(tsim);
   SDL_Quit();
 
   return 0;
