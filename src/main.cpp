@@ -38,6 +38,8 @@
 #include "init.hpp"
 #include "user.hpp"
 
+#define FAST_OBJ_IMPLEMENTATION
+#include "fast_obj.h"
 
 // eCAL
 #ifdef eCAL_ON
@@ -93,10 +95,12 @@ int main(int argc, char** argv)
 
   // (b) point cloud
 #ifdef __linux__
-  std::string s[2] = { "./data/veloout_0_10.pcd","./data/hrlframe_0_back.pcd" };
+  std::string s_pcl[2] = { "./data/veloout_0_10.pcd","./data/hrlframe_0_back.pcd" };
+  std::string s_obj = "./data/Freightliner_Cascadia_10%_new.obj";
 #endif
 #ifdef WIN32
-  std::string s[2] = { "../data/veloout_0_10.pcd","../data/hrlframe_0_back.pcd" };
+  std::string s_pcl[2] = { "../data/veloout_0_10.pcd","../data/hrlframe_0_back.pcd" };
+  std::string s_obj = "../data/Freightliner_Cascadia_10%_new.obj";
 #endif
 
 
@@ -119,12 +123,18 @@ int main(int argc, char** argv)
 
 
   int i_toggle = 1;
-  std::cout << "main.cpp: loading " << s[0] << std::endl;
-//  int numpoints = pointcloud_load(s[0]);
+  std::cout << "main.cpp: loading " << s_pcl[0] << std::endl;
+//  int numpoints = pointcloud_load(s_pcl[0]);
 //  gpu_push_buffers(numpoints);
 
   dman.create_scene();
   dman.load_objs();
+
+  mesh_gpu_create();
+// https://github.com/thisistherk/fast_obj
+  fastObjMesh* mesh = fast_obj_read(s_obj.c_str());
+//  ...do stuff with mesh...
+  mesh_gpu_push_buffers(mesh);
 
   init_GL();
 
@@ -142,7 +152,7 @@ int main(int argc, char** argv)
         // (a) sim step             --> done 1/4/2024 --> thread
         // (b) collision detection
         // (c) draw
-    render(window, p.numpoints);
+    render(window, p.numpoints, mesh);
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -173,6 +183,8 @@ int main(int argc, char** argv)
     }
   } while (!close);
 
+  fast_obj_destroy(mesh);
+  
   gpu_free_buffers(); // free point cloud vbo
 
   dman.free_objs();

@@ -1,5 +1,12 @@
 #ifndef GPU_PRIMITIVES_HPP
 #define GPU_PRIMITIVES_HPP
+
+
+//#ifndef FAST_OBJ_IMPLEMENTATION
+//#define FAST_OBJ_IMPLEMENTATION
+#include "fast_obj.h"
+//#endif // FAST_OBJ_IMPLEMENTATION
+
 /*
 class grid {
   // not used yet
@@ -435,5 +442,41 @@ public:
   } // buildVerticesSmooth()
 };
 cylinder* htor; // don't define here but elsewhere, add manager!
+
+
+void mesh_gpu_create() {
+  glGenBuffers(1, &mesh_vbo);
+  glGenBuffers(1, &mesh_vbo_col);
+};
+
+void mesh_gpu_push_buffers(fastObjMesh* mesh) {
+  // (a) vertices
+  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->position_count, mesh->positions, GL_STATIC_DRAW);
+  // hmm, so obviously this is not needed here, but maybe somewhere ...
+  // to enable the vertexattribarray (good for all vbo)
+//  glEnableVertexAttribArray(vpos_location);
+//  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  // (b) colors // 2do --> check if 0!!
+  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
+///  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh->color_count, mesh->colors, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->normal_count, mesh->normals, GL_STATIC_DRAW);
+  //  glEnableVertexAttribArray(vcol_location);
+  //  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+};
+
+void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh speichern
+  // now as we have multiple vbo (1 for point cloud, 1 for grid), we need to
+  // (a) bind the buffer (pos+col) and 
+  // (b) set the shader attribute
+  // before drawing
+  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
+  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // <-- ?
+  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
+  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh->position_count/3));
+//  glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(ind_count), GL_UNSIGNED_INT, (void*)0);
+};
 
 #endif // DRAW_PRIMITIVES_HPP

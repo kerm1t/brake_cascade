@@ -48,6 +48,9 @@ GLuint grid_vbo_col;
 GLuint cube_vbo;
 GLuint cube_vbo_col;
 GLuint cube_vbo_tex;
+// mesh
+GLuint mesh_vbo;
+GLuint mesh_vbo_col;
 
 // (b) gpu shader attributes
 GLint vpos_location, vcol_location, tex_location;
@@ -382,7 +385,7 @@ void cam_update(int width, int height) { // or just view update
 vec2 earth;
 vec2 moonpos;
 //float moon_spin = 0.0f;
-void render(SDL_Window* window, int numpoints) {
+void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     cam_update(width, height);
@@ -410,7 +413,7 @@ void render(SDL_Window* window, int numpoints) {
 
 // (b) draw cube
     glUniform3f(T_location, d_truck, 0.0f, 0.0f); // pseudo camera position
-    gpu_cube_render();
+///    gpu_cube_render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f);
 
 //    grid1->render();
@@ -447,8 +450,10 @@ void render(SDL_Window* window, int numpoints) {
 if (sun)    sun->render();
 
     glUniform3f(T_location, 5.0f, 0.0f, 0.0f); // pseudo camera position
-    htor->render();
+//    htor->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
+
+    mesh_render(mesh);
 
     GLenum err = glGetError();
     if (err != 0)
