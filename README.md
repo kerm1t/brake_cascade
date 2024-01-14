@@ -5,10 +5,10 @@ Display & process point cloud on ARM processor.
 
 ### Tested on
 
-| Soc  | CPU  | GPU  | OS  |   |
-|---|---|---|---|---|
-|  Raspberry PI 4 | ARM-72 Cortex  | Broadcom Vidcore  | Raspian  |  ![image](https://github-am.geo.conti.de/storage/user/606/files/f6a594e2-8c31-441d-a322-f3465065ecb9)
-|  HP Zbook | Core i7  | NVidia  | Windows  |  ![image](https://github-am.geo.conti.de/storage/user/606/files/39923e09-1c32-4352-9fb8-f8ec543175e0)
+| Soc  | CPU  | GPU  | OS  |
+|---|---|---|---|
+|  Raspberry PI 4 | ARM-72 Cortex  | Broadcom Vidcore  | Raspian
+|  HP Zbook | Core i7  | NVidia  | Windows
 
 ![image](https://github-am.geo.conti.de/storage/user/606/files/ab8a22bf-c790-452d-9dcb-b83d3a02cd22)
 
