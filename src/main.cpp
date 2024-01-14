@@ -135,6 +135,7 @@ int main(int argc, char** argv)
   fastObjMesh* mesh = fast_obj_read(s_obj.c_str());
 //  ...do stuff with mesh...
   mesh_gpu_push_buffers(mesh);
+// https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/
 
   init_GL();
 

@@ -32,7 +32,7 @@ set(protobuf_files
 set(glew "glew-2.1.0")
 
 include_directories(. ./src
-lib/${glew}/include
+./lib/${glew}/include
 ${SDL2_INCLUDE_DIRS}
 ./include/imgui ./include/imgui/src ./include/imgui/debuggers
 ./src/features ./src/math ./src/pointcloud ./src/util)
@@ -82,6 +82,7 @@ src/features/lane.h
 src/math/linmath.h
 src/math/mathbase.h
 src/util/color.h
+src/util/fast_obj.h
 )
 
 # add WIN32 to remove console window ->

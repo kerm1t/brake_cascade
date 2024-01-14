@@ -51,6 +51,7 @@ GLuint cube_vbo_tex;
 // mesh
 GLuint mesh_vbo;
 GLuint mesh_vbo_col;
+GLuint mesh_vbo_ind;
 
 // (b) gpu shader attributes
 GLint vpos_location, vcol_location, tex_location;

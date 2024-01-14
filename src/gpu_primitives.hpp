@@ -447,6 +447,7 @@ cylinder* htor; // don't define here but elsewhere, add manager!
 void mesh_gpu_create() {
   glGenBuffers(1, &mesh_vbo);
   glGenBuffers(1, &mesh_vbo_col);
+  glGenBuffers(1, &mesh_vbo_ind);
 };
 
 void mesh_gpu_push_buffers(fastObjMesh* mesh) {
@@ -455,15 +456,27 @@ void mesh_gpu_push_buffers(fastObjMesh* mesh) {
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->position_count, mesh->positions, GL_STATIC_DRAW);
   // hmm, so obviously this is not needed here, but maybe somewhere ...
   // to enable the vertexattribarray (good for all vbo)
+//  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
 //  glEnableVertexAttribArray(vpos_location);
-//  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
   // (b) colors // 2do --> check if 0!!
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
 ///  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh->color_count, mesh->colors, GL_STATIC_DRAW);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->normal_count, mesh->normals, GL_STATIC_DRAW);
-  //  glEnableVertexAttribArray(vcol_location);
-  //  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+//  glEnableVertexAttribArray(vcol_location);
+//  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  unsigned int* mesh_vtx_ind;
+  fastObjIndex* p_mesh;
+  mesh_vtx_ind = (unsigned int*)malloc(mesh->index_count*sizeof(unsigned int));
+  p_mesh = mesh->indices;
+  for (int i = 0; i < mesh->index_count; i++) {
+    mesh_vtx_ind[i] = p_mesh->p;
+    p_mesh++;
+  }
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
+//  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh->index_count, mesh->indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh->index_count, mesh_vtx_ind, GL_STATIC_DRAW);
+  free(mesh_vtx_ind);
 };
 
 void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh speichern
@@ -475,8 +488,10 @@ void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh sp
   glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // <-- ?
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
   glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh->position_count/3));
-//  glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(ind_count), GL_UNSIGNED_INT, (void*)0);
+//  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh->position_count/3));
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
+//  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->index_count), GL_UNSIGNED_INT, (void*)3);
 };
 
 #endif // DRAW_PRIMITIVES_HPP
