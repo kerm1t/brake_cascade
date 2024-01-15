@@ -603,12 +603,13 @@ void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh sp
   // before drawing
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
   glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // <-- ?
+///  glEnableVertexAttribArray(vpos_location);
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
   glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 //  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh->position_count/3));
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
-//  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-///  glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->index_count), GL_UNSIGNED_INT, (void*)3);
+///  glEnableVertexAttribArray(vcol_location);
+
   glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh_index_count), GL_UNSIGNED_INT, (void*)3); // hack!!!
 };
 

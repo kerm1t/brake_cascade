@@ -100,7 +100,9 @@ int main(int argc, char** argv)
 #endif
 #ifdef WIN32
   std::string s_pcl[2] = { "../data/veloout_0_10.pcd","../data/hrlframe_0_back.pcd" };
-  std::string s_obj = "../data/Freightliner_Cascadia_10%_new.obj";
+//  std::string s_obj = "../data/Freightliner_Cascadia_10%_new.obj";
+  std::string s_obj = "../data/cube.obj";
+//  std::string s_obj = "../data/plane.obj";
 #endif
 
 
