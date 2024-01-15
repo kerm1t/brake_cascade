@@ -81,6 +81,7 @@ src/features/freespace.h
 src/features/lane.h
 src/math/linmath.h
 src/math/mathbase.h
+src/math/yocto_math.h
 src/util/color.h
 src/util/fast_obj.h
 )

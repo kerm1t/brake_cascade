@@ -35,7 +35,7 @@ int thread1(void* p)
         auto start = stop_earth;
         stop_earth = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop_earth - start);
-        year = duration.count();
+        year = (float)duration.count();
       }
 
       moon_spin += 0.01f; // RAD
@@ -46,7 +46,7 @@ int thread1(void* p)
         auto start = stop;
         stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        month = duration.count();
+        month = (float)duration.count();
       }
 
       // (a) linear
