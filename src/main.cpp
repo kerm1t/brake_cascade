@@ -86,6 +86,9 @@ int main(int argc, char** argv)
   // GLEW initialisieren (Context muss bereits existieren)
   init_GlEW();
 
+  init_GL();
+  glDisable(GL_CULL_FACE);
+  
   gpu_create_shaders(); // openGL: init GPU structures
   gpu_create_buffers(); // openGL: init GPU structures
   gpu_create_variables(); // openGL: init GPU structures
@@ -100,9 +103,10 @@ int main(int argc, char** argv)
 #endif
 #ifdef WIN32
   std::string s_pcl[2] = { "../data/veloout_0_10.pcd","../data/hrlframe_0_back.pcd" };
-//  std::string s_obj = "../data/Freightliner_Cascadia_10%_new.obj";
-  std::string s_obj = "../data/cube.obj";
+  std::string s_obj = "../data/Freightliner_Cascadia_10%_new.obj";
+//  std::string s_obj = "../data/cube.obj";
 //  std::string s_obj = "../data/plane.obj";
+//  std::string s_obj = "../data/plane2x4.obj";
 #endif
 
 
@@ -136,11 +140,12 @@ int main(int argc, char** argv)
 // https://github.com/thisistherk/fast_obj
   fastObjMesh* mesh = fast_obj_read(s_obj.c_str());
 //  ...do stuff with mesh...
-  mesh_gpu_push_buffers(mesh);
+  mesh_gpu_push_buffers_1(mesh);
 // https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/
 
-  init_GL();
+  two_tris_i.create_buffers_from_faces();
 
+///  gpu_create_shaders(); // openGL: init GPU structures
   // Setup Dear ImGui context
   ImGuiIO& io = init_Imgui(window, glContext);
 
