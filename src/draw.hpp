@@ -461,6 +461,13 @@ if (sun)    sun->render();
 */
     mesh_render(mesh);
 
+    // 2 more instances
+    glUniform3f(T_location, 25.0f, 0.0f, 0.0f); // pseudo camera position
+    mesh_render(mesh);
+
+    glUniform3f(T_location, -25.0f, 0.0f, 0.0f); // pseudo camera position
+    mesh_render(mesh);
+    glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
 ///    two_tris_i.render();
 
 

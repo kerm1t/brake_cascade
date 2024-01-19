@@ -22,6 +22,9 @@ std::vector<float> grid_colors;
 
 GLenum err;
 
+unsigned int VAO_grid;
+unsigned int VAO_mesh;
+
 void grid_create() {
   for (int x = -50; x <= 50; x += 10) {
     // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM? 
@@ -62,6 +65,8 @@ void grid_free() {
 };
 
 void grid_gpu_push_buffers() {
+  glGenVertexArrays(1, &VAO_grid);
+  glBindVertexArray(VAO_grid);
   // (a) vertices
   glBindBuffer(GL_ARRAY_BUFFER, grid_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * grid_vertices.size(), &grid_vertices[0], GL_STATIC_DRAW);
@@ -82,6 +87,7 @@ void grid_gpu_push_buffers() {
 };
 
 void grid_render() {
+  glBindVertexArray(VAO_grid);
   // now as we have multiple vbo (1 for point cloud, 1 for grid), we need to
   // (a) bind the buffer (pos+col) and 
   // (b) set the shader attribute
@@ -641,7 +647,7 @@ bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
         yocto::vec3f temp;
 
         memcpy(&temp, &m->positions[idx_p * 3], sizeof(vec3));
-        vertex_data.push_back(temp);
+        vertex_data.push_back(temp*0.1f); // hack!! --> scaling
 //        out.bb_min = min(out.bb_min, temp);
 //        out.bb_max = max(out.bb_max, temp);
 
@@ -692,6 +698,9 @@ bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
   */
 //  out.num_indices = int(indices.size());
 
+  glGenVertexArrays(1, &VAO_mesh);
+  glBindVertexArray(VAO_mesh);
+
   // (a) vertices
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
   err = glGetError();
@@ -721,6 +730,7 @@ bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
 }
 
 void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh speichern
+  glBindVertexArray(VAO_mesh);
   // now as we have multiple vbo (1 for point cloud, 1 for grid), we need to
   // (a) bind the buffer (pos+col) and 
   // (b) set the shader attribute
@@ -742,6 +752,7 @@ void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh sp
 //  glEnableVertexAttribArray(vcol_location);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
+// this doesn't work -->  glScalef(0.1f, 0.1f, 0.1f); 
   glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh_index_count), GL_UNSIGNED_INT, 0);// (void*)3); // hack!!!
   err = glGetError();
 };
