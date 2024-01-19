@@ -27,13 +27,15 @@ unsigned int VAO_mesh;
 
 void grid_create() {
   for (int x = -50; x <= 50; x += 10) {
-    // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM? 
-    grid_vertices.push_back((float)x);
+    // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM?
+    // i tweaked this to be in same orientation with the trucks
+    // --> need an obj "grid" with orientation
     grid_vertices.push_back(-50.0f);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back((float)x);
     grid_vertices.push_back(50.0f);
     grid_vertices.push_back(0.0f);
+    grid_vertices.push_back((float)x);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
@@ -42,12 +44,12 @@ void grid_create() {
     grid_colors.push_back(1.0f);
   }
   for (int y = -50; y <= 50; y += 10) {
+    grid_vertices.push_back((float)y);
+    grid_vertices.push_back(0.0f);
     grid_vertices.push_back(-50.0f);
     grid_vertices.push_back((float)y);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back(50.0f);
-    grid_vertices.push_back((float)y);
-    grid_vertices.push_back(0.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);

@@ -459,13 +459,15 @@ if (sun)    sun->render();
 //    htor->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
 */
+    float h = 9.1f;
+    glUniform3f(T_location, 0.0f, h, -d_truck); // pseudo camera position
     mesh_render(mesh);
 
     // 2 more instances
-    glUniform3f(T_location, 25.0f, 0.0f, 0.0f); // pseudo camera position
+    glUniform3f(T_location, 25.0f, h, -d_truck*0.9f); // pseudo camera position
     mesh_render(mesh);
 
-    glUniform3f(T_location, -25.0f, 0.0f, 0.0f); // pseudo camera position
+    glUniform3f(T_location, -25.0f, h, -d_truck*1.5f); // pseudo camera position
     mesh_render(mesh);
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
 ///    two_tris_i.render();
