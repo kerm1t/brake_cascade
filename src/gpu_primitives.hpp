@@ -107,23 +107,23 @@ void grid_render() {
 
 //enum draw_mode {dm_POINTS=0, dm_LINES=1, dm_VERTICES=2, dm_UNDEF=255};
 
-class gpu_prim {
+class gpu_prim { // vertices + colors! (either explicitly or via normals)
 protected:
   std::vector<float> vertices;
   uint32_t n_vertices;
 
   unsigned int VAO; // easy switch between vertex buffers and vertex attributes/configs --> works!
   unsigned int VBO;
+  unsigned int VBO_col; // ~hacky
 public:
   void create_buffers() {
     // (1) define data and send to GPU
-    std::vector<GLfloat> vertices = { -0.967722, 0.055854, 1.980188, // ccw, these are actually coordinates, a vertex is rather (x,y,z)
+    std::vector<GLfloat> vertices = { -0.967722, 0.055854, 1.980188, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
                                        2.970117, 0.055854, 1.980188,
                                       -0.967722, 0.055854, 0.009238,
-      //                                    2.970117, 0.055854, 0.009238,
-                                          2.970117, 0.055854, 1.980188,
-                                          2.970117, 0.055854, 0.009238,
-                                          -0.967722, 0.055854, 0.009238
+                                       2.970117, 0.055854, 1.980188, // Tri2
+                                       2.970117, 0.055854, 0.009238,
+                                      -0.967722, 0.055854, 0.009238
     };
 
     glGenVertexArrays(1, &VAO);
@@ -133,7 +133,7 @@ public:
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
-    n_vertices = vertices.size(); // <-- braucht man f�r zweites dreieck
+    n_vertices = vertices.size(); // <-- braucht man fuer zweites dreieck
     // GL_STREAM_DRAW : the data is set only once and used by the GPU at most a few times.
     // GL_STATIC_DRAW : the data is set only once and used many times.
     // GL_DYNAMIC_DRAW : the data is changed a lot and used many times.
@@ -153,14 +153,24 @@ public:
     // GL_FALSE = normalize data
     //  3*float = stride
     // (void*)0 = start offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // <-- malt das zweite dreieck nicht, hier muss #vertices, n�� falsch
-  ///  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0); // attrib location
-  ///  glEnableVertexAttribArray(vpos_location); // attrib location
+///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // <-- malt das zweite dreieck nicht, hier muss #vertices, noeoe falsch
+    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+///    glEnableVertexAttribArray(0); // attrib location
+    glEnableVertexAttribArray(vpos_location); // attrib location
+
+    // farben --> oder normals --> oder textures :-) 2do!
+    glGenBuffers(1, &VBO_col);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_col); // <-- umpf, hatte ich vergessen
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
+///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+/// nope    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(vcol_location);
   }
   void render() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_col); // mal sehn
     err = glGetError();
     glDrawArrays(GL_TRIANGLES, 0, n_vertices); // <-- hmm, hier malt immer 3 vertices
   }
@@ -197,9 +207,9 @@ public:
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
-    n_vertices = vertices.size(); // <-- braucht man f�r zweites dreieck
+    n_vertices = vertices.size(); // <-- braucht man fuer zweites dreieck
 
-    // without the attrib desciption, doesn't draw second tri (next 2 lines)
+    // without the attrib description, doesn't draw second tri (next 2 lines)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0); // attrib location
     err = glGetError();
