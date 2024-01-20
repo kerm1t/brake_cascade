@@ -10,7 +10,8 @@ Display & process point cloud on ARM processor.
 |  Raspberry PI 4 | ARM-72 Cortex  | Broadcom Vidcore  | Raspian
 |  HP Zbook | Core i7  | NVidia  | Windows
 
-![image](https://github-am.geo.conti.de/storage/user/606/files/ab8a22bf-c790-452d-9dcb-b83d3a02cd22)
+
+![1-20-2024_lanes_norm,wet,icy](https://github.com/kerm1t/brake_cascade/assets/26294323/7ad6ec16-5e65-4118-9924-05db2c54d6c9)
 
 
 How to build
