@@ -116,7 +116,7 @@ protected:
   unsigned int VBO;
   unsigned int VBO_col; // ~hacky
 public:
-  void create_buffers() {
+  void create_buffers(float r, float g, float b) {
     // (1) define data and send to GPU
     std::vector<GLfloat> vertices = { -8, 0.055854, 500, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
                                        8, 0.055854, 500,
@@ -124,6 +124,14 @@ public:
                                        8, 0.055854, 500, // Tri2
                                        8, 0.055854, -500,
                                       -8, 0.055854, -500
+    };
+
+    std::vector<GLfloat> colors = { r, g, b, // Tri1
+                                    r, g, b,
+                                    r, g, b,
+                                    r, g, b, // Tri2
+                                    r, g, b,
+                                    r, g, b
     };
 
     glGenVertexArrays(1, &VAO);
@@ -161,7 +169,7 @@ public:
     // farben --> oder normals --> oder textures :-) 2do!
     glGenBuffers(1, &VBO_col);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_col); // <-- umpf, hatte ich vergessen
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*colors.size(), &colors[0], GL_STATIC_DRAW); // copy user data to buffer
 ///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 /// nope    glEnableVertexAttribArray(0);

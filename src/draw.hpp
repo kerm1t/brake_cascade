@@ -59,6 +59,9 @@ GLint vpos_location, vcol_location, tex_location;
 #include "gpu_primitives.hpp" // include after vpos_location, 2do: fix this
 
 gpu_prim two_tris; // to be after incl. gpu_primitives
+gpu_prim lane_normal;
+gpu_prim lane_wet;
+gpu_prim lane_icy;
 gpu_prim_indexed two_tris_i;
 
 
@@ -479,13 +482,16 @@ if (sun)    sun->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
 
 // draw 3 "lanes"
-    two_tris.render();
+///    two_tris.render();
+    lane_normal.render();
     glUniform3f(T_location, 25.0f, 0.0f, 0.0f); // pseudo camera position
-    two_tris.render();
+///    two_tris.render();
+    lane_wet.render();
     glUniform3f(T_location, -25.0f, 0.0f, 0.0f); // pseudo camera position
-    two_tris.render();
+///    two_tris.render();
+    lane_icy.render();
 
-    two_tris_i.render(); // <-- not being drawn ? 
+///    two_tris_i.render(); // <-- not being drawn ? 
 
 
     GLenum err = glGetError();

@@ -143,8 +143,12 @@ int main(int argc, char** argv)
   mesh_gpu_push_buffers_1(mesh);
 // https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/
 
-  two_tris.create_buffers();
-  two_tris_i.create_buffers_from_faces();
+///  two_tris.create_buffers(0.0,0.0,1.0);
+///  two_tris_i.create_buffers_from_faces();
+
+  lane_normal.create_buffers(0.5, 0.5, .5);
+  lane_wet.create_buffers(0.0, 0.0, 1.0);
+  lane_icy.create_buffers(1.0, 0.9, 1.0);
 
   // Setup Dear ImGui context
   ImGuiIO& io = init_Imgui(window, glContext);
