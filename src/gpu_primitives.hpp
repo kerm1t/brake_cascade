@@ -1,4 +1,4 @@
-#ifndef GPU_PRIMITIVES_HPP
+Ôªø#ifndef GPU_PRIMITIVES_HPP
 #define GPU_PRIMITIVES_HPP
 
 
@@ -20,15 +20,22 @@ class grid {
 std::vector<float> grid_vertices;
 std::vector<float> grid_colors;
 
+GLenum err;
+
+unsigned int VAO_grid;
+unsigned int VAO_mesh;
+
 void grid_create() {
   for (int x = -50; x <= 50; x += 10) {
-    // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM? 
-    grid_vertices.push_back((float)x);
+    // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM?
+    // i tweaked this to be in same orientation with the trucks
+    // --> need an obj "grid" with orientation
     grid_vertices.push_back(-50.0f);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back((float)x);
     grid_vertices.push_back(50.0f);
     grid_vertices.push_back(0.0f);
+    grid_vertices.push_back((float)x);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
@@ -37,12 +44,12 @@ void grid_create() {
     grid_colors.push_back(1.0f);
   }
   for (int y = -50; y <= 50; y += 10) {
+    grid_vertices.push_back((float)y);
+    grid_vertices.push_back(0.0f);
     grid_vertices.push_back(-50.0f);
     grid_vertices.push_back((float)y);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back(50.0f);
-    grid_vertices.push_back((float)y);
-    grid_vertices.push_back(0.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
@@ -60,6 +67,8 @@ void grid_free() {
 };
 
 void grid_gpu_push_buffers() {
+  glGenVertexArrays(1, &VAO_grid);
+  glBindVertexArray(VAO_grid);
   // (a) vertices
   glBindBuffer(GL_ARRAY_BUFFER, grid_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * grid_vertices.size(), &grid_vertices[0], GL_STATIC_DRAW);
@@ -67,27 +76,162 @@ void grid_gpu_push_buffers() {
   // to enable the vertexattribarray (good for all vbo)
 //  glEnableVertexAttribArray(vpos_location);
 //  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glEnableVertexAttribArray(vpos_location);
 
   // (b) colors
   glBindBuffer(GL_ARRAY_BUFFER, grid_vbo_col);
   glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * grid_colors.size(), &grid_colors[0], GL_STATIC_DRAW);
 //  glEnableVertexAttribArray(vcol_location);
 //  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glEnableVertexAttribArray(vcol_location);
 };
 
 void grid_render() {
+  glBindVertexArray(VAO_grid);
   // now as we have multiple vbo (1 for point cloud, 1 for grid), we need to
   // (a) bind the buffer (pos+col) and 
   // (b) set the shader attribute
   // before drawing
   glBindBuffer(GL_ARRAY_BUFFER, grid_vbo);
-  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  //  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+//  glEnableVertexAttribArray(vpos_location);
+  
   glBindBuffer(GL_ARRAY_BUFFER, grid_vbo_col);
-  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  //  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+//  glEnableVertexAttribArray(vcol_location); 
+  
   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(grid_vertices.size()));
 };
 
 //enum draw_mode {dm_POINTS=0, dm_LINES=1, dm_VERTICES=2, dm_UNDEF=255};
+
+class gpu_prim { // vertices + colors! (either explicitly or via normals)
+protected:
+  std::vector<float> vertices;
+  uint32_t n_vertices;
+
+  unsigned int VAO; // easy switch between vertex buffers and vertex attributes/configs --> works!
+  unsigned int VBO;
+  unsigned int VBO_col; // ~hacky
+public:
+  void create_buffers(float r, float g, float b) {
+    // (1) define data and send to GPU
+    std::vector<GLfloat> vertices = { -8, 0.055854, 500, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
+                                       8, 0.055854, 500,
+                                      -8, 0.055854, -500,
+                                       8, 0.055854, 500, // Tri2
+                                       8, 0.055854, -500,
+                                      -8, 0.055854, -500
+    };
+
+    std::vector<GLfloat> colors = { r, g, b, // Tri1
+                                    r, g, b,
+                                    r, g, b,
+                                    r, g, b, // Tri2
+                                    r, g, b,
+                                    r, g, b
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    // create gpu_buffer (here: VBuff --> VBO)
+  // need to be global, as render needs it -->  unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
+    n_vertices = vertices.size(); // <-- braucht man fuer zweites dreieck
+    // GL_STREAM_DRAW : the data is set only once and used by the GPU at most a few times.
+    // GL_STATIC_DRAW : the data is set only once and used many times.
+    // GL_DYNAMIC_DRAW : the data is changed a lot and used many times.
+
+    // (2) write vertex shader --> s. start.vs
+    // (2a) upload to GPU + compile vertex shader --> s. draw.hpp  // is this compiled by GPU or by OpenGL ?
+
+    // (3) write fragment shader --> s. start.fs
+    // (3a) compile fragment shader --> s. draw.hpp
+
+// moved to (render.)main    gpu_create_shaders(); // hmmm, hatte ich vergessen, doof
+
+    // (4) define vertex attributes / parameters
+    //        0 = location of attri.
+    //        3 = size of attrib
+    // GL_FLOAT = type of data
+    // GL_FALSE = normalize data
+    //  3*float = stride
+    // (void*)0 = start offset
+///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // <-- malt das zweite dreieck nicht, hier muss #vertices, noeoe falsch
+    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+///    glEnableVertexAttribArray(0); // attrib location
+    glEnableVertexAttribArray(vpos_location); // attrib location
+
+    // farben --> oder normals --> oder textures :-) 2do!
+    glGenBuffers(1, &VBO_col);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_col); // <-- umpf, hatte ich vergessen
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*colors.size(), &colors[0], GL_STATIC_DRAW); // copy user data to buffer
+///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+/// nope    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(vcol_location);
+  }
+  void render() {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_col); // mal sehn
+    err = glGetError();
+    glDrawArrays(GL_TRIANGLES, 0, n_vertices); // <-- hmm, hier malt immer 3 vertices
+  }
+  void cleanup() {
+    // needed?    glDeleteBuffers(VBO);
+  }
+};
+
+class gpu_prim_indexed : gpu_prim {
+protected:
+///  std::vector<unsigned int> faces; // vertices //// + normals (+textures)
+  unsigned int n_indices;
+
+  unsigned int EBO; // or IBO
+
+public:
+  void create_buffers_from_faces() {
+    std::vector<GLfloat> vertices = { 5.967722, 0.055854, 1.980188, // ccw
+                                   22.970117, 0.055854, 1.980188,
+                                  5.967722, 0.055854, 0.009238,
+                                   22.970117, 0.055854, 0.009238 };
+    std::vector<unsigned int> face_indices = { 1,2,0, 1,3,2 }; // ccw
+//    std::vector<unsigned int> face_indices = { 0,2,1, 1,2,3 }; // cw
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    ///    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(face_indices), &face_indices[0], GL_STATIC_DRAW); // sizeof(indices) ... grrrrr!
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*face_indices.size(), &face_indices[0], GL_STATIC_DRAW); // <-- unsigned int statt float
+    n_indices = face_indices.size();
+
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
+    n_vertices = vertices.size(); // <-- braucht man fuer zweites dreieck
+
+    // without the attrib description, doesn't draw second tri (next 2 lines)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0); // attrib location
+    err = glGetError();
+    err = glGetError();
+  };
+  void render() {
+    glBindVertexArray(VAO);
+    err = glGetError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    err = glGetError();
+    glDrawElements(GL_TRIANGLES, n_indices, GL_UNSIGNED_INT, 0); // hier crash, weil ich oben glGenBuffers vergessen habe
+    err = glGetError();
+  };
+};
 
 // sphere = oop-Pilot
 class obj {
@@ -433,7 +577,7 @@ public:
       }
     }
 
-// hier fehlt noch das kreieren der indices, oben werden nur points hinzugef¸gt
+// hier fehlt noch das kreieren der indices, oben werden nur points hinzugef√ºgt
 
 // hmmmm
     glGenBuffers(1, &_vbo);
@@ -455,8 +599,9 @@ void mesh_gpu_create() {
   glGenBuffers(1, &mesh_vbo_col);
   glGenBuffers(1, &mesh_vbo_ind);
 };
-#if false
-void mesh_gpu_push_buffers(fastObjMesh* mesh) {
+int mesh_index_count; // hack!!
+///#if false
+void mesh_gpu_push_buffers(fastObjMesh* mesh) { // this is wrong, as not vertices/positions define the object, but faces
   // (a) vertices
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->position_count, mesh->positions, GL_STATIC_DRAW);
@@ -483,10 +628,11 @@ void mesh_gpu_push_buffers(fastObjMesh* mesh) {
 //  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh->index_count, mesh->indices, GL_STATIC_DRAW);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh->index_count, mesh_vtx_ind, GL_STATIC_DRAW);
   free(mesh_vtx_ind);
+  mesh_index_count = mesh->index_count;
 };
-#endif
-int mesh_index_count; // hack!!
-bool mesh_gpu_push_buffers(fastObjMesh* m) {
+///#endif
+///int mesh_index_count; // hack!!
+bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
   if (!m) return false;
   if (m->face_count == 0) return false;
   if (m->position_count == 0) return false;
@@ -532,7 +678,7 @@ bool mesh_gpu_push_buffers(fastObjMesh* m) {
         yocto::vec3f temp;
 
         memcpy(&temp, &m->positions[idx_p * 3], sizeof(vec3));
-        vertex_data.push_back(temp);
+        vertex_data.push_back(temp*0.1f); // hack!! --> scaling
 //        out.bb_min = min(out.bb_min, temp);
 //        out.bb_max = max(out.bb_max, temp);
 
@@ -544,8 +690,10 @@ bool mesh_gpu_push_buffers(fastObjMesh* m) {
         current_idx++;
       }
       else
-        indices.push_back(idx_merged->second);
+        indices.push_back(idx_merged->second)
+        ;
     }
+///    std::vector<unsigned int> face_indices = { 1,2,0, 1,3,2 }; //hack!!!!
     current_vtx += 3;
   }
 
@@ -581,36 +729,63 @@ bool mesh_gpu_push_buffers(fastObjMesh* m) {
   */
 //  out.num_indices = int(indices.size());
 
+  glGenVertexArrays(1, &VAO_mesh);
+  glBindVertexArray(VAO_mesh);
+
   // (a) vertices
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_data.size(), &vertex_data[0], GL_STATIC_DRAW);
+  err = glGetError();
+///  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_data.size(), &vertex_data[0], GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * vertex_data.size(), &vertex_data[0], GL_STATIC_DRAW);
+  err = glGetError();
+  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // <-- ?
+  glEnableVertexAttribArray(vpos_location);
 
-  // (b) colors // 2do --> besser w‰ren normals!!
+  // (b) colors // 2do --> besser w√§ren normals!!
   glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normal_data.size(), &normal_data[0], GL_STATIC_DRAW);
+  err = glGetError();
+///  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normal_data.size(), &normal_data[0], GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * normal_data.size(), &normal_data[0], GL_STATIC_DRAW);
+  err = glGetError();
+  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(vcol_location);
 
   // (c) indices
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
+  err = glGetError();
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), &indices[0], GL_STATIC_DRAW);
+  err = glGetError();
   mesh_index_count = indices.size(); // hack!!
+
   return true;
 }
 
 void mesh_render(fastObjMesh* mesh) { // 2do: besser den pointer auf das mesh speichern
+  glBindVertexArray(VAO_mesh);
   // now as we have multiple vbo (1 for point cloud, 1 for grid), we need to
   // (a) bind the buffer (pos+col) and 
   // (b) set the shader attribute
   // before drawing
-  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
-  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // <-- ?
-///  glEnableVertexAttribArray(vpos_location);
-  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
-  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh->position_count/3));
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
-///  glEnableVertexAttribArray(vcol_location);
+/*  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo);
+  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0); // <-- ?
+  glEnableVertexAttribArray(vpos_location);
 
-  glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh_index_count), GL_UNSIGNED_INT, (void*)3); // hack!!!
+  glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo_col);
+  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+  glEnableVertexAttribArray(vcol_location);
+  err = glGetError();
+//  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh->position_count/3));
+//  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh_index_count));
+*/
+//  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // <-- ?
+//  glEnableVertexAttribArray(vpos_location);
+//  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+//  glEnableVertexAttribArray(vcol_location);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo_ind);
+// this doesn't work -->  glScalef(0.1f, 0.1f, 0.1f); 
+  glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh_index_count), GL_UNSIGNED_INT, 0);// (void*)3); // hack!!!
+  err = glGetError();
 };
 
 #endif // DRAW_PRIMITIVES_HPP

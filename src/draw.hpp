@@ -1,7 +1,7 @@
 #ifndef DRAW_HPP
 #define DRAW_HPP
 
-#include "linmath.h"
+//#include "linmath.h"
 
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -57,6 +57,14 @@ GLuint mesh_vbo_ind;
 GLint vpos_location, vcol_location, tex_location;
 
 #include "gpu_primitives.hpp" // include after vpos_location, 2do: fix this
+
+gpu_prim two_tris; // to be after incl. gpu_primitives
+gpu_prim lane_normal;
+gpu_prim lane_wet;
+gpu_prim lane_icy;
+gpu_prim_indexed two_tris_i;
+
+
 
 void gpu_create_shaders() {  
   GLuint vertex_shader, fragment_shader;
@@ -397,6 +405,9 @@ void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
     glUseProgram(program);
     glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
 
+
+    // dman.render() <-- no single obj render calls anymore in here
+/*
     // (a) draw/render point cloud
     glPointSize(4);
     int npoints = lloft::vertices.size();
@@ -409,9 +420,9 @@ void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer[colorcoding]); // 2do, there is colorcoding and color_coding
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(npoints));
-    
+*/    
     grid_render();
-
+/*
 // (b) draw cube
     glUniform3f(T_location, d_truck, 0.0f, 0.0f); // pseudo camera position
 ///    gpu_cube_render();
@@ -438,6 +449,7 @@ void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
     glUniform3f(T_location, moonpos[0], moonpos[1], 0.0f); // pseudo camera position
     moon->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f);
+    */
 /*    // measure 1 moon spin
     if (moon_spin < 0.01f)
     {
@@ -447,14 +459,40 @@ void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
       month = duration.count();
     }
     */
+    /*
 // (e) draw sun
 if (sun)    sun->render();
 
     glUniform3f(T_location, 5.0f, 0.0f, 0.0f); // pseudo camera position
 //    htor->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
+*/
 
+// draw 3 "trucks"
+    float h = 9.1f;
+    glUniform3f(T_location, 0.0f, h, -d_truck); // pseudo camera position
     mesh_render(mesh);
+
+    // 2 more instances
+    glUniform3f(T_location, 25.0f, h, -d_truck*0.9f); // pseudo camera position
+    mesh_render(mesh);
+
+    glUniform3f(T_location, -25.0f, h, -d_truck*1.5f); // pseudo camera position
+    mesh_render(mesh);
+    glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
+
+// draw 3 "lanes"
+///    two_tris.render();
+    lane_normal.render();
+    glUniform3f(T_location, 25.0f, 0.0f, 0.0f); // pseudo camera position
+///    two_tris.render();
+    lane_wet.render();
+    glUniform3f(T_location, -25.0f, 0.0f, 0.0f); // pseudo camera position
+///    two_tris.render();
+    lane_icy.render();
+
+///    two_tris_i.render(); // <-- not being drawn ? 
+
 
     GLenum err = glGetError();
     if (err != 0)
