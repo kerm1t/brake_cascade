@@ -112,6 +112,7 @@ protected:
   std::vector<float> vertices;
   uint32_t n_vertices;
 
+  unsigned int VAO; // easy switch between vertex buffers and vertex attributes/configs --> works!
   unsigned int VBO;
 public:
   void create_buffers() {
@@ -125,6 +126,8 @@ public:
                                           -0.967722, 0.055854, 0.009238
     };
 
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
     // create gpu_buffer (here: VBuff --> VBO)
   // need to be global, as render needs it -->  unsigned int VBO;
     glGenBuffers(1, &VBO);
@@ -156,6 +159,7 @@ public:
   ///  glEnableVertexAttribArray(vpos_location); // attrib location
   }
   void render() {
+    glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
     err = glGetError();
     glDrawArrays(GL_TRIANGLES, 0, n_vertices); // <-- hmm, hier malt immer 3 vertices
@@ -174,12 +178,15 @@ protected:
 
 public:
   void create_buffers_from_faces() {
-    std::vector<GLfloat> vertices = { -0.967722, 0.055854, 1.980188, // ccw
-                                   2.970117, 0.055854, 1.980188,
-                                  -0.967722, 0.055854, 0.009238,
-                                   2.970117, 0.055854, 0.009238 };
+    std::vector<GLfloat> vertices = { 5.967722, 0.055854, 1.980188, // ccw
+                                   22.970117, 0.055854, 1.980188,
+                                  5.967722, 0.055854, 0.009238,
+                                   22.970117, 0.055854, 0.009238 };
     std::vector<unsigned int> face_indices = { 1,2,0, 1,3,2 }; // ccw
 //    std::vector<unsigned int> face_indices = { 0,2,1, 1,2,3 }; // cw
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -199,8 +206,12 @@ public:
     err = glGetError();
   };
   void render() {
+    glBindVertexArray(VAO);
+    err = glGetError();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    err = glGetError();
     glDrawElements(GL_TRIANGLES, n_indices, GL_UNSIGNED_INT, 0); // hier crash, weil ich oben glGenBuffers vergessen habe
+    err = glGetError();
   };
 };
 

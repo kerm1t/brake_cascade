@@ -8,6 +8,6 @@ uniform vec3 T; // translate
 void main()
 {
     gl_Position = MVP * vec4((vPos + T), 1.0);
-    color = vCol;
+//    color = vCol;
 };
 )"

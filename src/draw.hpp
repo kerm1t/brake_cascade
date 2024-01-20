@@ -399,6 +399,9 @@ void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
 
     glUseProgram(program);
     glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
+
+
+    // dman.render() <-- no single obj render calls anymore in here
 /*
     // (a) draw/render point cloud
     glPointSize(4);
@@ -413,7 +416,7 @@ void render(SDL_Window* window, int numpoints, fastObjMesh* mesh) {
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(npoints));
 */    
-    grid_render();
+///    grid_render();
 /*
 // (b) draw cube
     glUniform3f(T_location, d_truck, 0.0f, 0.0f); // pseudo camera position
@@ -459,7 +462,7 @@ if (sun)    sun->render();
 //    htor->render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
 */
-    float h = 9.1f;
+/*    float h = 9.1f;
     glUniform3f(T_location, 0.0f, h, -d_truck); // pseudo camera position
     mesh_render(mesh);
 
@@ -470,7 +473,9 @@ if (sun)    sun->render();
     glUniform3f(T_location, -25.0f, h, -d_truck*1.5f); // pseudo camera position
     mesh_render(mesh);
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
-///    two_tris_i.render();
+*/
+    two_tris.render();
+    two_tris_i.render(); // <-- not being drawn ? 
 
 
     GLenum err = glGetError();
