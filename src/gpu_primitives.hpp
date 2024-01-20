@@ -118,12 +118,12 @@ protected:
 public:
   void create_buffers() {
     // (1) define data and send to GPU
-    std::vector<GLfloat> vertices = { -0.967722, 0.055854, 1.980188, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
-                                       2.970117, 0.055854, 1.980188,
-                                      -0.967722, 0.055854, 0.009238,
-                                       2.970117, 0.055854, 1.980188, // Tri2
-                                       2.970117, 0.055854, 0.009238,
-                                      -0.967722, 0.055854, 0.009238
+    std::vector<GLfloat> vertices = { -8, 0.055854, 500, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
+                                       8, 0.055854, 500,
+                                      -8, 0.055854, -500,
+                                       8, 0.055854, 500, // Tri2
+                                       8, 0.055854, -500,
+                                      -8, 0.055854, -500
     };
 
     glGenVertexArrays(1, &VAO);
