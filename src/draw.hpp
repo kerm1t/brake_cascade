@@ -371,7 +371,7 @@ void cam_update(int width, int height) { // or just view update
   mat4x4_perspective(projection,
     65.f * (float)M_PI / 180.f,
     aspect,
-    0.1f, 300.f);
+    0.1f, 800.f); // frustrum
 
   glMatrixMode(GL_MODELVIEW);
   {
@@ -470,14 +470,14 @@ if (sun)    sun->render();
 
 // draw 3 "trucks"
     float h = 9.1f;
-    glUniform3f(T_location, 0.0f, h, -d_truck); // pseudo camera position
+    glUniform3f(T_location, 0.0f, h, -sim::d_truck); // pseudo camera position
     mesh_render(mesh);
 
     // 2 more instances
-    glUniform3f(T_location, 25.0f, h, -d_truck*0.9f); // pseudo camera position
+    glUniform3f(T_location, 25.0f, h, -sim::d_truck_wet); // pseudo camera position
     mesh_render(mesh);
 
-    glUniform3f(T_location, -25.0f, h, -d_truck*1.5f); // pseudo camera position
+    glUniform3f(T_location, -25.0f, h, -sim::d_truck_icy); // pseudo camera position
     mesh_render(mesh);
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
 

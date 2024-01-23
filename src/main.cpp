@@ -153,8 +153,11 @@ int main(int argc, char** argv)
   // Setup Dear ImGui context
   ImGuiIO& io = init_Imgui(window, glContext);
 
+
   SDL_Thread* tsim;
-  tsim = SDL_CreateThread(thread1, "sim", 0);
+  tsim = SDL_CreateThread(sim::thread1, "sim", 0);
+  sim::init();
+
 
   // Game Loop
   bool close = false;
