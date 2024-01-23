@@ -31,13 +31,18 @@ set(protobuf_files
 
 set(glew "glew-2.1.0")
 
+set(GLEW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/${glew}/include)
+set(GLEW_LIB_DIR_RELEASE_X64 ${CMAKE_CURRENT_SOURCE_DIR}/lib/${glew}/lib/release/x64)
+set(_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+set(__LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+
 include_directories(. ./src
-./lib/${glew}/include
+${GLEW_INCLUDE_DIR}
 ${SDL2_INCLUDE_DIRS}
 ./include/imgui ./include/imgui/src ./include/imgui/debuggers
 ./src/features ./src/math ./src/pointcloud ./src/util)
 
-link_directories(./lib/${glew}/lib/release/x64 ./lib ../lib)
+link_directories(${GLEW_LIB_DIR_RELEASE_X64} ${_LIB_DIR} ${__LIB_DIR})
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
