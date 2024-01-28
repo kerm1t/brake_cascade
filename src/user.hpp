@@ -2,7 +2,8 @@
 #define USER_HPP
 
 
-int mx, my;
+namespace user {
+  int mx, my;
 
 void process_event(SDL_Event& event) {
   if (event.type == SDL_MOUSEWHEEL)
@@ -25,15 +26,19 @@ void process_event(SDL_Event& event) {
     cam.rot[0] -= (my - event.motion.y) * 3.14159f / 180.0f;
     cam.rot[1] += (mx - event.motion.x) * 3.14159f / 180.0f;
   }
+  if ((event.type == SDL_MOUSEMOTION) && (event.motion.state & SDL_BUTTON_RMASK))
+  {
+    cam.trans[0] += mx-event.motion.x;
+    cam.trans[1] -= my-event.motion.y;
+  }
+  if ((event.type == SDL_MOUSEMOTION) && (event.motion.state & SDL_BUTTON_MMASK))
+  {
+    cam.trans[0] += mx - event.motion.x;
+    cam.trans[2] += my - event.motion.y;
+  }
   mx = event.motion.x;
   my = event.motion.y;
 
-  if (event.type == SDL_MOUSEMOTION &&
-    event.button.button == SDL_BUTTON_RIGHT)
-  {
-    cam.trans[1] += event.motion.x;
-    cam.trans[0] += event.motion.y;
-  }
   // https://www.libsdl.org/release/SDL-1.2.15/docs/html/guideinputkeyboard.html
   if (event.type == SDL_KEYUP)
   {
@@ -90,5 +95,6 @@ void process_event(SDL_Event& event) {
   }
 
 }
+} // namespace user
 
 #endif // INIT_HPP

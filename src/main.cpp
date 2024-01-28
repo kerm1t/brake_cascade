@@ -189,7 +189,7 @@ int main(int argc, char** argv)
     {
       ImGui_ImplSDL2_ProcessEvent(&event);
       
-      process_event(event); // mouse wheel, drag & drop, ..., quit
+      user::process_event(event); // mouse wheel, drag & drop, ..., quit
 
       if (event.type == SDL_QUIT)
       {
