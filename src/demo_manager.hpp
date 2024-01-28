@@ -8,7 +8,7 @@ private:
 public:
   int create_scene() {
     // (c) grid
-    grid_create();
+    grid_create(-380, 230, 25);
     grid_gpu_push_buffers();
 
     // (d) oop-grid ;-)

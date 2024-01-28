@@ -25,15 +25,15 @@ GLenum err;
 unsigned int VAO_grid;
 unsigned int VAO_mesh;
 
-void grid_create() {
-  for (int x = -50; x <= 50; x += 10) {
+void grid_create(const float startx, const float stopx, const float dX) {
+  for (int x = startx; x <= stopx; x += dX) {
     // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM?
     // i tweaked this to be in same orientation with the trucks
     // --> need an obj "grid" with orientation
     grid_vertices.push_back(-50.0f);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back((float)x);
-    grid_vertices.push_back(50.0f);
+    grid_vertices.push_back(100.0f);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back((float)x);
     grid_colors.push_back(1.0f);
@@ -43,7 +43,7 @@ void grid_create() {
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
   }
-  for (int y = -50; y <= 50; y += 10) {
+/*  for (int y = -50; y <= 50; y += 10) {
     grid_vertices.push_back((float)y);
     grid_vertices.push_back(0.0f);
     grid_vertices.push_back(-50.0f);
@@ -57,7 +57,7 @@ void grid_create() {
     grid_colors.push_back(1.0f);
     grid_colors.push_back(1.0f);
   }
-  glGenBuffers(1, &grid_vbo);
+*/  glGenBuffers(1, &grid_vbo);
   glGenBuffers(1, &grid_vbo_col);
 };
 
