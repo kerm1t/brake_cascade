@@ -9,8 +9,8 @@
 
 #include <vector>
 #include <unordered_map>
-#include "linmath.h"
 #include "yocto_math.h"
+typedef yocto::vec3f vec3f;
 
 //using namespace yocto;
 /*
@@ -398,7 +398,7 @@ public:
         texCoords.push_back(s);
         texCoords.push_back(t);
 
-        vec3 f;
+        vec3f f;
         f[0] = rand() / 32767.0f;
         f[1] = rand() / 32767.0f;
         f[2] = rand() / 32767.0f;
@@ -522,7 +522,7 @@ public:
         texCoords.push_back((float)j / sectorCount); // s
         texCoords.push_back(t);                      // t
 // hmm, should be rather automatic happen
-        vec3 f;
+        vec3f f;
         f[0] = rand() / 32767.0f;
         f[1] = rand() / 32767.0f;
         f[2] = rand() / 32767.0f;
@@ -566,7 +566,7 @@ public:
         texCoords.push_back(-ux * 0.5f + 0.5f);      // s
         texCoords.push_back(-uy * 0.5f + 0.5f);      // t
 // hmm, should be rather automatic happen
-        vec3 f;
+        vec3f f;
         f[0] = rand() / 32767.0f;
         f[1] = rand() / 32767.0f;
         f[2] = rand() / 32767.0f;
@@ -638,8 +638,8 @@ bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
   if (m->position_count == 0) return false;
   if (m->normal_count == 0) return false; // we could compute normals, but right now, we don't
 
-  std::vector<yocto::vec3f> vertex_data;
-  std::vector<yocto::vec3f> normal_data;
+  std::vector<vec3f> vertex_data;
+  std::vector<vec3f> normal_data;
   std::vector<uint32_t> indices;
 
 /////  vertex_data.reserve(m->position_count);
@@ -675,14 +675,14 @@ bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
       auto idx_merged = objFaceVertexToMeshIndex.find(mergedIndices);
       if (idx_merged == objFaceVertexToMeshIndex.end())
       {
-        yocto::vec3f temp;
+        vec3f temp;
 
-        memcpy(&temp, &m->positions[idx_p * 3], sizeof(vec3));
+        memcpy(&temp, &m->positions[idx_p * 3], sizeof(vec3f));
         vertex_data.push_back(temp*0.1f); // hack!! --> scaling
 //        out.bb_min = min(out.bb_min, temp);
 //        out.bb_max = max(out.bb_max, temp);
 
-        memcpy(&temp, &m->normals[idx_n * 3], sizeof(vec3));
+        memcpy(&temp, &m->normals[idx_n * 3], sizeof(vec3f));
         normal_data.push_back(temp);
 
         objFaceVertexToMeshIndex[mergedIndices] = current_idx;
