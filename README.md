@@ -27,7 +27,8 @@ How to build
 
 ### Windows
 
-1. get SDL2
-2. get Glew
-3. run cmake
-4. copy SDL.dll from /lib\SDL2-2.26.4\lib\x64 to /Debug or /Release
+1. get SDL2-devel, e.g. from https://github.com/libsdl-org/SDL/releases
+2. get Glew, e.g. https://sourceforge.net/projects/glew/files/glew/2.1.0/
+3. update cmake to use above libs/includes
+4. run cmake
+5. copy SDL.dll from /lib\SDL2-2.26.4\lib\x64 to /Debug or /Release
