@@ -25,7 +25,7 @@ GLenum err;
 unsigned int VAO_grid;
 unsigned int VAO_mesh;
 
-void grid_create(const float startx, const float stopx, const float dX) {
+void grid_create(const int startx, const int stopx, const int dX) {
   for (int x = startx; x <= stopx; x += dX) {
     // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM?
     // i tweaked this to be in same orientation with the trucks
@@ -110,6 +110,7 @@ void grid_render() {
 class gpu_prim { // vertices + colors! (either explicitly or via normals)
 protected:
   std::vector<float> vertices;
+  std::vector<float> colors;
   uint32_t n_vertices;
 
   unsigned int VAO; // easy switch between vertex buffers and vertex attributes/configs --> works!
@@ -118,20 +119,20 @@ protected:
 public:
   void create_buffers(float r, float g, float b) {
     // (1) define data and send to GPU
-    std::vector<GLfloat> vertices = { -8, 0.055854, 500, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
-                                       8, 0.055854, 500,
-                                      -8, 0.055854, -500,
-                                       8, 0.055854, 500, // Tri2
-                                       8, 0.055854, -500,
-                                      -8, 0.055854, -500
+    vertices = { -8, 0.055854f,  500, // Tri1 ccw, these are actually coordinates, a vertex is rather (x,y,z)
+                  8, 0.055854f,  500,
+                 -8, 0.055854f, -500,
+                  8, 0.055854f,  500, // Tri2
+                  8, 0.055854f, -500,
+                 -8, 0.055854f, -500
     };
 
-    std::vector<GLfloat> colors = { r, g, b, // Tri1
-                                    r, g, b,
-                                    r, g, b,
-                                    r, g, b, // Tri2
-                                    r, g, b,
-                                    r, g, b
+    colors = { r, g, b, // Tri1
+               r, g, b,
+               r, g, b,
+               r, g, b, // Tri2
+               r, g, b,
+               r, g, b
     };
 
     glGenVertexArrays(1, &VAO);
@@ -141,7 +142,7 @@ public:
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
-    n_vertices = vertices.size(); // <-- braucht man fuer zweites dreieck
+    n_vertices = (uint32_t)vertices.size(); // <-- braucht man fuer zweites dreieck
     // GL_STREAM_DRAW : the data is set only once and used by the GPU at most a few times.
     // GL_STATIC_DRAW : the data is set only once and used many times.
     // GL_DYNAMIC_DRAW : the data is changed a lot and used many times.
@@ -196,10 +197,10 @@ protected:
 
 public:
   void create_buffers_from_faces() {
-    std::vector<GLfloat> vertices = { 5.967722, 0.055854, 1.980188, // ccw
-                                   22.970117, 0.055854, 1.980188,
-                                  5.967722, 0.055854, 0.009238,
-                                   22.970117, 0.055854, 0.009238 };
+    vertices = { 5.967722f, 0.055854f, 1.980188f, // ccw
+                22.970117f, 0.055854f, 1.980188f,
+                 5.967722f, 0.055854f, 0.009238f,
+                22.970117f, 0.055854f, 0.009238f };
     std::vector<unsigned int> face_indices = { 1,2,0, 1,3,2 }; // ccw
 //    std::vector<unsigned int> face_indices = { 0,2,1, 1,2,3 }; // cw
 
@@ -210,12 +211,12 @@ public:
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     ///    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(face_indices), &face_indices[0], GL_STATIC_DRAW); // sizeof(indices) ... grrrrr!
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*face_indices.size(), &face_indices[0], GL_STATIC_DRAW); // <-- unsigned int statt float
-    n_indices = face_indices.size();
+    n_indices = (unsigned int)face_indices.size();
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
-    n_vertices = vertices.size(); // <-- braucht man fuer zweites dreieck
+    n_vertices = (uint32_t)vertices.size(); // <-- braucht man fuer zweites dreieck
 
     // without the attrib description, doesn't draw second tri (next 2 lines)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -274,10 +275,10 @@ public:
     // now free vectors
     vertices.clear();
     colors.clear();
-    GLenum err = glGetError();
+    err = glGetError();
     if (err != 0)
     {
-      int i = 1;
+//      int i = 1;
     }
   };
   void render() { // draw
@@ -286,7 +287,7 @@ public:
     GLenum err = glGetError();
     if (err != 0)
     {
-      int i = 1;
+//      int i = 1;
     }
     glBindBuffer(GL_ARRAY_BUFFER, _vbo_col);
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -302,7 +303,7 @@ public:
     err = glGetError();
     if (err != 0)
     {
-      int i = 1;
+//      int i = 1;
     }
   };
 };
@@ -331,10 +332,10 @@ public:
     }
     glGenBuffers(1, &_vbo);    // move to obj.create
     glGenBuffers(1, &_vbo_col);// move to obj.create
-    GLenum err = glGetError();
+    err = glGetError();
     if (err != 0)
     {
-      int i = 1;
+//      int i = 1;
     }
   };
 //  void gpu_free();
@@ -453,10 +454,10 @@ public:
     glGenBuffers(1, &_vbo);
     glGenBuffers(1, &_vbo_col);
     glGenBuffers(1, &vbo_ind);
-    GLenum err = glGetError();
+    err = glGetError();
     if (err != 0)
     {
-      int i = 1;
+//      int i = 1;
     }
   };
 };
@@ -583,10 +584,10 @@ public:
     glGenBuffers(1, &_vbo);
     glGenBuffers(1, &_vbo_col);
     glGenBuffers(1, &vbo_ind);
-    GLenum err = glGetError();
+    err = glGetError();
     if (err != 0)
     {
-      int i = 1;
+//      int i = 1;
     }
 // hmmmm
   } // buildVerticesSmooth()
@@ -755,7 +756,7 @@ bool mesh_gpu_push_buffers_1(fastObjMesh* m) {
   err = glGetError();
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), &indices[0], GL_STATIC_DRAW);
   err = glGetError();
-  mesh_index_count = indices.size(); // hack!!
+  mesh_index_count = (int)indices.size(); // hack!!
 
   return true;
 }

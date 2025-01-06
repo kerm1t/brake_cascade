@@ -1,7 +1,10 @@
 #ifndef DRAW_HPP
 #define DRAW_HPP
 
-//#include "linmath.h"
+#include "linmath.h" // 2do: replace with yocto_math.h
+//#include "yocto_math.h"
+//typedef yocto::vec3f vec3;
+
 
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -123,13 +126,13 @@ void gpu_create_buffers() { // Buffer auf der Grafikkarte erstellen
     GLenum err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
     glGenBuffers(3, colorbuffer);
     err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
 }
 
@@ -147,7 +150,7 @@ void gpu_create_variables() {
     GLenum err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
 }
 
@@ -240,26 +243,26 @@ void gpu_cube() { // set cube data and push to gpu vbo
     GLenum err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
     err = glGetError(); 
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
     // OpenGL Vertex Format angeben
     glEnableVertexAttribArray(vpos_location);
     err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
     glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
 
 // (b) color
@@ -270,7 +273,7 @@ void gpu_cube() { // set cube data and push to gpu vbo
     err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
 
 //    glPopMatrix();
@@ -317,13 +320,13 @@ void gpu_push_buffers(int numpoints) {
     GLenum err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * lloft::vertices.size(), &lloft::vertices[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(vpos_location);
@@ -497,7 +500,7 @@ if (sun)    sun->render();
     GLenum err = glGetError();
     if (err != 0)
     {
-        int i = 1;
+//        int i = 1;
     }
 }
 void resize(int w, int h) {

@@ -146,9 +146,9 @@ int main(int argc, char** argv)
 ///  two_tris.create_buffers(0.0,0.0,1.0);
 ///  two_tris_i.create_buffers_from_faces();
 
-  lane_normal.create_buffers(0.5, 0.5, .5);
-  lane_wet.create_buffers(0.0, 0.0, 1.0);
-  lane_icy.create_buffers(1.0, 0.9, 1.0);
+  lane_normal.create_buffers(0.5f, 0.5f, .5f);
+  lane_wet.create_buffers(0.0f, 0.0f, 1.0f);
+  lane_icy.create_buffers(1.0f, 0.9f, 1.0f);
 
   // Setup Dear ImGui context
   ImGuiIO& io = init_Imgui(window, glContext);

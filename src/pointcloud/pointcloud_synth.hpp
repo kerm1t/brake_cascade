@@ -52,14 +52,14 @@ namespace lloft {
         pointcloud_ordered[j][k].d = d;
   */    }
     }
-    p.numpoints = p.pts_raw.size();
+    p.numpoints = (int)p.pts_raw.size();
   }
 
   // a) fill with random data
   void pointcloud_synth::random(int numpoints)
   {
 //    p.bbox = (0.0f, 0.0f, 0.0f, 0.0f);
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     for (int i = 0; i < numpoints; i++)
     {
       point pt;
@@ -78,7 +78,7 @@ namespace lloft {
 //      pt.b = 99;
 //      m_measPoints[1].push_back(pt);
     }
-    p.numpoints = p.pts_raw.size();
+    p.numpoints = (int)p.pts_raw.size();
   }
 
 
