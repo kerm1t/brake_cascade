@@ -3260,20 +3260,21 @@ namespace yocto {
 	inline mat4f ortho2d_mat(float left, float right, float bottom, float top) {
 		return ortho_mat(left, right, bottom, top, -1, 1);
 	}
-	inline mat4f ortho_mat(float xmag, float ymag, float near, float far) {
-		return { {1 / xmag, 0, 0, 0}, {0, 1 / ymag, 0, 0}, {0, 0, 2 / (near - far), 0},
-			{0, 0, (far + near) / (near - far), 1} };
+// remove duplicacy with microsoft defines "far", "near"
+	inline mat4f ortho_mat(float xmag, float ymag, float _near, float _far) {
+		return { {1 / xmag, 0, 0, 0}, {0, 1 / ymag, 0, 0}, {0, 0, 2 / (_near - _far), 0},
+			{0, 0, (_far + _near) / (_near - _far), 1} };
 	}
-	inline mat4f perspective_mat(float fovy, float aspect, float near, float far) {
+	inline mat4f perspective_mat(float fovy, float aspect, float _near, float _far) {
 		auto tg = tan(fovy / 2);
 		return { {1 / (aspect * tg), 0, 0, 0}, {0, 1 / tg, 0, 0},
-			{0, 0, (far + near) / (near - far), -1},
-			{0, 0, 2 * far * near / (near - far), 0} };
+			{0, 0, (_far + _near) / (_near - _far), -1},
+			{0, 0, 2 * _far * _near / (_near - _far), 0} };
 	}
-	inline mat4f perspective_mat(float fovy, float aspect, float near) {
+	inline mat4f perspective_mat(float fovy, float aspect, float _near) {
 		auto tg = tan(fovy / 2);
 		return { {1 / (aspect * tg), 0, 0, 0}, {0, 1 / tg, 0, 0}, {0, 0, -1, -1},
-			{0, 0, 2 * near, 0} };
+			{0, 0, 2 * _near, 0} };
 	}
 
 	// Rotation conversions.
@@ -4427,7 +4428,7 @@ namespace yocto {
 			return transform_direction(basis, local_halfway);
 		}
 		else {
-			throw std::invalid_argument{ "not implemented yet" };
+///			throw std::invalid_argument{ "not implemented yet" };
 		}
 	}
 
