@@ -8,13 +8,25 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(brake_cascade)
 
+
+
+# ------------------ Update here -----------
+set(glew "glew-2.2.0")
+set(sdl2 "SDL2-2.30.11")
+# option (A) central lib dir
+set(LIB_DIR c:/lib)
+# option (B) libs in sub-repo
+#set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+# ------------------ Update here -----------
+
+
+
 if(MSVC)
   # CMake >= 3.15 will erroneously define PROTOBUF_USE_DLLS otherwise
   set (Protobuf_USE_STATIC_LIBS TRUE) 
 endif()
 
-
-set (SDL2_DIR ./lib/SDL2-2.26.4/cmake)
+set (SDL2_DIR c:/lib/${sdl2}/cmake)
 find_package(SDL2 REQUIRED)
 if (eCAL_ON)
   find_package(eCAL REQUIRED)
@@ -29,20 +41,21 @@ set(protobuf_files
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/lane.proto 
 )
 
-set(glew "glew-2.1.0")
-
-set(GLEW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/${glew}/include)
-set(GLEW_LIB_DIR_RELEASE_X64 ${CMAKE_CURRENT_SOURCE_DIR}/lib/${glew}/lib/release/x64)
-set(_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-set(__LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+set(GLEW_INCLUDE_DIR ${LIB_DIR}/${glew}/include)
+set(GLEW_LIB_DIR_RELEASE_X64 ${LIB_DIR}/${glew}/lib/release/x64)
 
 include_directories(. ./src
 ${GLEW_INCLUDE_DIR}
 ${SDL2_INCLUDE_DIRS}
-./include/imgui ./include/imgui/src ./include/imgui/debuggers
-./src/features ./src/math ./src/pointcloud ./src/util)
+./include/imgui
+./include/imgui/src
+./include/imgui/debuggers
+./src/features
+./src/math
+./src/pointcloud
+./src/util)
 
-link_directories(${GLEW_LIB_DIR_RELEASE_X64} ${_LIB_DIR} ${__LIB_DIR})
+link_directories(${GLEW_LIB_DIR_RELEASE_X64} ${LIB_DIR})
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
