@@ -13,10 +13,8 @@ project(brake_cascade)
 # ------------------ Update here -----------
 set(glew "glew-2.2.0")
 set(sdl2 "SDL2-2.30.11")
-# option (A) central lib dir
-set(LIB_DIR c:/lib)
-# option (B) libs in sub-repo
-#set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+set(LIB_DIR c:/lib)                             # option (A) central lib dir
+#set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)   # option (B) libs in sub-repo
 # ------------------ Update here -----------
 
 
@@ -122,3 +120,11 @@ else()
     ${SDL2_LIBRARIES}
   )
 endif()
+
+# before comment in, remove linmath.h, as this causes too many warnings
+#if(MSVC)
+#  target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+#else()
+#  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+#endif()
+
