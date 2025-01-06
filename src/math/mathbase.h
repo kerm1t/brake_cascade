@@ -1,6 +1,8 @@
 #ifndef MATHBASE_H
 #define MATHBASE_H
 
+#include "linmath.h" // 2do: replace with yocto_math.h
+
 float lerp(const float a, const float b, const float t) {
   return a + t * (b - a);
 }

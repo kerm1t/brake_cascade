@@ -1,7 +1,7 @@
 #ifndef POINTCLOUD_H
 #define POINTCLOUD_H
 
-#include "math/linmath.h"
+#include "math/linmath.h" // 2do: replace with yocto_math.h
 #include "math/mathbase.h"
 
 #include <memory.h>

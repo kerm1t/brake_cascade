@@ -80,7 +80,7 @@ namespace sim {
 
         // (b) brake cascade
   ///      d_truck = -100+sim::brake(i_sim++);
-        d_truck = startpos.x + brk_normal.brake(i_sim++);
+        d_truck     = startpos.x + brk_normal.brake(i_sim++);
         d_truck_wet = startpos.x + brk_wet.brake(i_sim++);
         d_truck_icy = startpos.x + brk_icy.brake(i_sim++);
       }
