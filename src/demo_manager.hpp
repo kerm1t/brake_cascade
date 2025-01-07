@@ -2,6 +2,7 @@
 #define DEMO_MANAGER_H
 
 #include "gpu_primitives.hpp"
+#include "gpu_prim_GL.hpp"
 
 class demo_manager {
 private:
@@ -10,6 +11,8 @@ public:
     // (c) grid
     grid_create(-380, 230, 25);
     grid_gpu_push_buffers();
+
+    gpuprim_GL::tmp_obj = new gpuprim_GL::gpu_obj(vec3f(1.0f, 0.5f, .5f),vec3f(0,0,0),program);
 
     // (d) oop-grid ;-)
     grid1 = new grid();
@@ -54,6 +57,9 @@ public:
   }
 
   void free_objs() {
+
+    delete(gpuprim_GL::tmp_obj);
+    
     sph1->gpu_free();
     delete(sph1);
     moon->gpu_free();
