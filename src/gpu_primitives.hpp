@@ -1,111 +1,20 @@
 ﻿#ifndef GPU_PRIMITIVES_HPP
 #define GPU_PRIMITIVES_HPP
 
-
-//#ifndef FAST_OBJ_IMPLEMENTATION
-//#define FAST_OBJ_IMPLEMENTATION
 #include "fast_obj.h"
-//#endif // FAST_OBJ_IMPLEMENTATION
 
 #include <vector>
 #include <unordered_map>
 #include "yocto_math.h"
 typedef yocto::vec3f vec3f;
 
-//using namespace yocto;
-/*
-class grid {
-  // not used yet
-};*/
-std::vector<float> grid_vertices;
-std::vector<float> grid_colors;
 
 GLenum err;
 
+// 2do, wird aktuell von grid_direct und von mesh (loadobj) genutzt
 unsigned int VAO_grid;
 unsigned int VAO_mesh;
 
-void grid_create(const int startx, const int stopx, const int dX) {
-  for (int x = startx; x <= stopx; x += dX) {
-    // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM?
-    // i tweaked this to be in same orientation with the trucks
-    // --> need an obj "grid" with orientation
-    grid_vertices.push_back(-50.0f);
-    grid_vertices.push_back(0.0f);
-    grid_vertices.push_back((float)x);
-    grid_vertices.push_back(100.0f);
-    grid_vertices.push_back(0.0f);
-    grid_vertices.push_back((float)x);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-  }
-/*  for (int y = -50; y <= 50; y += 10) {
-    grid_vertices.push_back((float)y);
-    grid_vertices.push_back(0.0f);
-    grid_vertices.push_back(-50.0f);
-    grid_vertices.push_back((float)y);
-    grid_vertices.push_back(0.0f);
-    grid_vertices.push_back(50.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-    grid_colors.push_back(1.0f);
-  }
-*/  glGenBuffers(1, &grid_vbo);
-  glGenBuffers(1, &grid_vbo_col);
-};
-
-void grid_free() {
-  glDeleteBuffers(1, &grid_vbo);
-  glDeleteBuffers(1, &grid_vbo_col);
-};
-
-void grid_gpu_push_buffers() {
-  glGenVertexArrays(1, &VAO_grid);
-  glBindVertexArray(VAO_grid);
-  // (a) vertices
-  glBindBuffer(GL_ARRAY_BUFFER, grid_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * grid_vertices.size(), &grid_vertices[0], GL_STATIC_DRAW);
-  // hmm, so obviously this is not needed here, but maybe somewhere ...
-  // to enable the vertexattribarray (good for all vbo)
-//  glEnableVertexAttribArray(vpos_location);
-//  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(vpos_location);
-
-  // (b) colors
-  glBindBuffer(GL_ARRAY_BUFFER, grid_vbo_col);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * grid_colors.size(), &grid_colors[0], GL_STATIC_DRAW);
-//  glEnableVertexAttribArray(vcol_location);
-//  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(vcol_location);
-};
-
-void grid_render() {
-  glBindVertexArray(VAO_grid);
-  // now as we have multiple vbo (1 for point cloud, 1 for grid), we need to
-  // (a) bind the buffer (pos+col) and 
-  // (b) set the shader attribute
-  // before drawing
-  glBindBuffer(GL_ARRAY_BUFFER, grid_vbo);
-  //  glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//  glEnableVertexAttribArray(vpos_location);
-  
-  glBindBuffer(GL_ARRAY_BUFFER, grid_vbo_col);
-  //  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//  glEnableVertexAttribArray(vcol_location); 
-  
-  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(grid_vertices.size()));
-};
-
-//enum draw_mode {dm_POINTS=0, dm_LINES=1, dm_VERTICES=2, dm_UNDEF=255};
 
 class gpu_prim { // vertices + colors! (either explicitly or via normals)
 protected:
@@ -138,42 +47,18 @@ public:
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     // create gpu_buffer (here: VBuff --> VBO)
-  // need to be global, as render needs it -->  unsigned int VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // <-- umpf, hatte ich vergessen
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_STATIC_DRAW); // copy user data to buffer
     n_vertices = (uint32_t)vertices.size(); // <-- braucht man fuer zweites dreieck
-    // GL_STREAM_DRAW : the data is set only once and used by the GPU at most a few times.
-    // GL_STATIC_DRAW : the data is set only once and used many times.
-    // GL_DYNAMIC_DRAW : the data is changed a lot and used many times.
-
-    // (2) write vertex shader --> s. start.vs
-    // (2a) upload to GPU + compile vertex shader --> s. draw.hpp  // is this compiled by GPU or by OpenGL ?
-
-    // (3) write fragment shader --> s. start.fs
-    // (3a) compile fragment shader --> s. draw.hpp
-
-// moved to (render.)main    gpu_create_shaders(); // hmmm, hatte ich vergessen, doof
-
-    // (4) define vertex attributes / parameters
-    //        0 = location of attri.
-    //        3 = size of attrib
-    // GL_FLOAT = type of data
-    // GL_FALSE = normalize data
-    //  3*float = stride
-    // (void*)0 = start offset
-///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // <-- malt das zweite dreieck nicht, hier muss #vertices, noeoe falsch
     glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-///    glEnableVertexAttribArray(0); // attrib location
     glEnableVertexAttribArray(vpos_location); // attrib location
 
     // farben --> oder normals --> oder textures :-) 2do!
     glGenBuffers(1, &VBO_col);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_col); // <-- umpf, hatte ich vergessen
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*colors.size(), &colors[0], GL_STATIC_DRAW); // copy user data to buffer
-///    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-/// nope    glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(vcol_location);
   }
   void render() {
@@ -202,14 +87,12 @@ public:
                  5.967722f, 0.055854f, 0.009238f,
                 22.970117f, 0.055854f, 0.009238f };
     std::vector<unsigned int> face_indices = { 1,2,0, 1,3,2 }; // ccw
-//    std::vector<unsigned int> face_indices = { 0,2,1, 1,2,3 }; // cw
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    ///    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(face_indices), &face_indices[0], GL_STATIC_DRAW); // sizeof(indices) ... grrrrr!
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*face_indices.size(), &face_indices[0], GL_STATIC_DRAW); // <-- unsigned int statt float
     n_indices = (unsigned int)face_indices.size();
 
@@ -243,6 +126,7 @@ protected:
   std::vector<float> texCoords;// new
   std::vector<unsigned int> indices; // new
   // OpenGL specific
+  GLuint _vao;
   GLuint _vbo;
   GLuint _vbo_col;
   GLuint vbo_ind;
@@ -258,15 +142,21 @@ public:
     glDeleteBuffers(1, &_vbo_col);
   };
   virtual void gpu_push_buffers() { // ... this could be obsolete then
+    glGenVertexArrays(1, &_vao);
+    glBindVertexArray(_vao);
     vtx_count = (GLuint)vertices.size();
     col_count = (GLuint)colors.size(); // exception, as I had forgot to set colorcount
     ind_count = (GLuint)indices.size();
     // (a) vertices
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vtx_count, &vertices[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(vpos_location);
     // (b) colors
     glBindBuffer(GL_ARRAY_BUFFER, _vbo_col);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * col_count, &colors[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(vcol_location);
     // opt: (c) indices
     if (ind_count > 0) {
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ind);
@@ -278,19 +168,20 @@ public:
     err = glGetError();
     if (err != 0)
     {
-//      int i = 1;
+      std::cout << "GL err: " << err << std::endl;
     }
   };
   void render() { // draw
+    glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+//    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     GLenum err = glGetError();
     if (err != 0)
     {
-//      int i = 1;
+      std::cout << "GL err: " << err << std::endl;
     }
     glBindBuffer(GL_ARRAY_BUFFER, _vbo_col);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+//    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     // check that vtx_count is set, i.e. > 0
     // also color count has to be same size, otherwise draw will cause runtime exception
     if (ind_count == 0) {
@@ -303,7 +194,7 @@ public:
     err = glGetError();
     if (err != 0)
     {
-//      int i = 1;
+      std::cout << "GL err: " << err << std::endl;
     }
   };
 };
@@ -316,13 +207,13 @@ public:
 //    vtx_count = 0;
     for (int x = -50; x <= 50; x += 10) {
       // 2do, somewhat it didn't work to push a point to a vector of points, instead of a vector of floats <-- on ARM? 
-      vertices.push_back((float)x);
       vertices.push_back(-50.0f);
       vertices.push_back(0.0f);
       vertices.push_back((float)x);
       vertices.push_back(50.0f);
       vertices.push_back(0.0f);
-//      vtx_count++;
+      vertices.push_back((float)x);
+      //      vtx_count++;
       colors.push_back(1.0f);
       colors.push_back(0.0f);
       colors.push_back(0.0f);
@@ -330,6 +221,8 @@ public:
       colors.push_back(1.0f);
       colors.push_back(0.0f);
     }
+    glGenVertexArrays(1, &_vao);
+    glBindVertexArray(_vao);
     glGenBuffers(1, &_vbo);    // move to obj.create
     glGenBuffers(1, &_vbo_col);// move to obj.create
     err = glGetError();
@@ -337,6 +230,7 @@ public:
     {
 //      int i = 1;
     }
+    draw_mode = GL_LINES; // 2do --> to constructor
   };
 //  void gpu_free();
 //  void gpu_push_buffers();
