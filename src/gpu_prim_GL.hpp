@@ -2,7 +2,6 @@
 #define GPU_PRIMITIVES_GL_HPP
 
 #include <vector>
-//#include <unordered_map>
 #include "yocto_math.h"
 typedef yocto::vec3f vec3f;
 
@@ -11,7 +10,7 @@ typedef yocto::vec3f vec3f;
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-///#include "fast_obj.h"
+// 2do: implement
 
 namespace gpuprim_GL {
 
@@ -98,19 +97,6 @@ namespace gpuprim_GL {
       glBindVertexArray(vao);
       vert_buf = new vertex_buffer(vertices, colors, n_vertices);
 //      ind_buf = new index_buffer(indices, n_indices * sizeof(indices[0]));
-
-
-
-      GLuint vpos_location = glGetAttribLocation(program, "vPos");
-      GLuint vcol_location = glGetAttribLocation(program, "vCol");
-      glBindBuffer(GL_ARRAY_BUFFER, vert_buf->vbo);
-      glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-      glEnableVertexAttribArray(vpos_location); // attrib location
-
-      glBindBuffer(GL_ARRAY_BUFFER, vert_buf->vbo_col);
-      glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-      glEnableVertexAttribArray(vcol_location); // attrib location
-
     }
 
     ~gpu_obj() {
@@ -120,22 +106,19 @@ namespace gpuprim_GL {
 
     void render() {
       glBindVertexArray(vao);
-////      GLuint vpos_location = glGetAttribLocation(program, "vPos");
+      
+      glUseProgram(program);
+      GLuint vpos_location = glGetAttribLocation(program, "vPos");
       GLuint vcol_location = glGetAttribLocation(program, "vCol");
-//      GLuint uvLoc = glGetAttribLocation(Fill->program, "TexCoord");
       
       glBindBuffer(GL_ARRAY_BUFFER, vert_buf->vbo);
-      GLenum err = glGetError();
-      if (err != 0)
-      {
-        std::cout << "GL err: " << err << std::endl;
-      }
-////      glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-////      glEnableVertexAttribArray(vpos_location); // attrib location
+      glEnableVertexAttribArray(vpos_location); // attrib location
+      glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
       glBindBuffer(GL_ARRAY_BUFFER, vert_buf->vbo_col);
-////      glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-////      glEnableVertexAttribArray(vcol_location); // attrib location
+      glEnableVertexAttribArray(vcol_location); // attrib location
+      glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
       // check that vtx_count is set, i.e. > 0
       // also color count has to be same size, otherwise draw will cause runtime exception
       if (n_indices == 0) {
@@ -150,6 +133,10 @@ namespace gpuprim_GL {
       {
         std::cout << "GL err: " << err << std::endl;
       }
+      glDisableVertexAttribArray(vpos_location);
+      glDisableVertexAttribArray(vcol_location);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glUseProgram(0);
     }
   };
 
