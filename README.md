@@ -1,4 +1,4 @@
-# pointcloud4ARM
+# Brake cascade
 
 Display & process point cloud on ARM processor.
 
