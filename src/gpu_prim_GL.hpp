@@ -10,8 +10,15 @@ typedef yocto::vec3f vec3f;
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-// 2do: implement
-
+/* 2do: implement
+  + initial pilot (plane)
+  - standard objects (plane, sphere, torus, ...)
+  - generated objects (starduck)
+  - loaded meshes
+  - pointcloud --> pointcloud.hpp
+  - image (texture)
+  - algorithm debug (ground model, freespace, road boundaries)
+*/
 namespace gpuprim_GL {
 
   GLenum err;
@@ -107,7 +114,7 @@ namespace gpuprim_GL {
     void render() {
       glBindVertexArray(vao);
       
-      glUseProgram(program);
+//      glUseProgram(program);
       GLuint vpos_location = glGetAttribLocation(program, "vPos");
       GLuint vcol_location = glGetAttribLocation(program, "vCol");
       
@@ -133,10 +140,11 @@ namespace gpuprim_GL {
       {
         std::cout << "GL err: " << err << std::endl;
       }
-      glDisableVertexAttribArray(vpos_location);
-      glDisableVertexAttribArray(vcol_location);
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
-      glUseProgram(0);
+// kann ich aktuell nicht so machen, da sonst f.d anderen Objekte die attribs und das program gelöscht werden --> 
+//      glDisableVertexAttribArray(vpos_location);
+//      glDisableVertexAttribArray(vcol_location);
+//      glBindBuffer(GL_ARRAY_BUFFER, 0);
+//      glUseProgram(0);
     }
   };
 

@@ -284,7 +284,7 @@ if (sun)    sun->render();
 */
 
 // draw 3 "trucks"
-/*    float h = 9.1f;
+    float h = 9.1f;
     glUniform3f(T_location, 0.0f, h, -sim::d_truck); // pseudo camera position
     mesh_render(mesh);
 
@@ -295,7 +295,7 @@ if (sun)    sun->render();
     glUniform3f(T_location, -25.0f, h, -sim::d_truck_icy); // pseudo camera position
     mesh_render(mesh);
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
-  */  
+  
 // draw 3 "lanes"
 ///    two_tris.render();
     glUniform3f(T_location, 0.0f, 0.0f, 0.0f); // pseudo camera position
