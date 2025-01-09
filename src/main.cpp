@@ -90,7 +90,7 @@ int main(int argc, char** argv)
   glDisable(GL_CULL_FACE);
   
   gpu_create_shaders(); // openGL: init GPU structures
-  gpu_create_buffers(); // openGL: init GPU structures
+//  gpu_create_buffers(); // openGL: init GPU structures
   gpu_create_variables(); // openGL: init GPU structures
 
 // (a) cube
@@ -133,22 +133,7 @@ int main(int argc, char** argv)
 //  int numpoints = pointcloud_load(s_pcl[0]);
 //  gpu_push_buffers(numpoints);
 
-  dman.create_scene();
-  dman.load_objs();
-
-  mesh_gpu_create();
-// https://github.com/thisistherk/fast_obj
-  fastObjMesh* mesh = fast_obj_read(s_obj.c_str());
-//  ...do stuff with mesh...
-  mesh_gpu_push_buffers_1(mesh);
-// https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/
-
-///  two_tris.create_buffers(0.0,0.0,1.0);
-///  two_tris_i.create_buffers_from_faces();
-
-  lane_normal.create_buffers(0.5f, 0.5f, .5f);
-  lane_wet.create_buffers(0.0f, 0.0f, 1.0f);
-  lane_icy.create_buffers(1.0f, 0.9f, 1.0f);
+  dman.create(s_obj);
 
   // Setup Dear ImGui context
   ImGuiIO& io = init_Imgui(window, glContext);
@@ -167,7 +152,7 @@ int main(int argc, char** argv)
         // (a) sim step             --> done 1/4/2024 --> thread
         // (b) collision detection
         // (c) draw
-    render(window, p.numpoints, mesh);
+    render(window, p.numpoints, dman.mesh);
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -197,13 +182,10 @@ int main(int argc, char** argv)
       }
     }
   } while (!close);
-
-  fast_obj_destroy(mesh);
   
-  gpu_free_buffers(); // free point cloud vbo
+//  gpu_free_buffers(); // free point cloud vbo
 
-  dman.free_objs();
-  dman.free_scene();
+  dman.free();
 
   SDL_Quit();
 

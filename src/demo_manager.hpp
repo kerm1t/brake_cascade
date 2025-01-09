@@ -7,6 +7,7 @@
 class demo_manager {
 private:
 public:
+  fastObjMesh* mesh;
   int create_scene() {
     // (c) grid
     grid_create(-380, 230, 25);
@@ -69,6 +70,33 @@ public:
       delete(sun);
     }
     htor->gpu_free();
+  }
+
+  void create(std::string s_obj) {
+    create_scene();
+    load_objs();
+
+    mesh_gpu_create();
+    // https://github.com/thisistherk/fast_obj
+    mesh = fast_obj_read(s_obj.c_str());
+    //  ...do stuff with mesh...
+    mesh_gpu_push_buffers_1(mesh);
+    // https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/
+
+    ///  two_tris.create_buffers(0.0,0.0,1.0);
+    ///  two_tris_i.create_buffers_from_faces();
+
+    lane_normal.create_buffers(0.5f, 0.5f, .5f);
+    lane_wet.create_buffers(0.0f, 0.0f, 1.0f);
+    lane_icy.create_buffers(1.0f, 0.9f, 1.0f);
+  }
+
+  void free() {
+    
+    fast_obj_destroy(mesh);
+
+    free_objs();
+    free_scene();
   }
 };
 
