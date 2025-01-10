@@ -13,8 +13,8 @@ project(brake_cascade)
 # ------------------ Update here -----------
 set(glew "glew-2.2.0")
 set(sdl2 "SDL2-2.30.11")
-set(LIB_DIR c:/lib)                             # option (A) central lib dir
-#set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)   # option (B) libs in sub-repo
+set(LIB_DIR c:/lib)                             # option (A) - libs in central dir
+#set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)   # option (B) - libs in sub-repo
 # ------------------ Update here -----------
 
 
@@ -81,6 +81,8 @@ src/sim.hpp
 src/cascade_jerk3.hpp
 src/draw.hpp
 src/gpu_primitives.hpp
+src/gpu_primitives_direct.hpp
+src/gpu_prim_GL.hpp
 src/draw_overlay.hpp
 src/draw_imgui.hpp
 src/shader/start.fs
